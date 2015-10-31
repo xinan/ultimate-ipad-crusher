@@ -1,0 +1,178 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage[none]{hyphenat}
+
+\begin{document}
+
+%===============================================================================
+% Start of Cover Page
+%===============================================================================
+\title{\Huge\textbf{The iPad Crusher \vfill
+	\large Project Report \\ \bigskip
+	for \\ \bigskip
+	CS2309 CS Research Methodology \\ \bigskip
+	\large AY15/16 Sem 1 \vfill}
+	}
+\author{
+	Department of Computer Science \\\\
+	School of Computing \\\\
+	National University of Singapore}
+%\date{}
+
+\maketitle
+%===============================================================================
+% End of Cover Page
+%===============================================================================
+
+\pagenumbering{roman}
+
+%===============================================================================
+% Start of Title Page
+%===============================================================================
+\begin{titlepage}
+\addcontentsline{toc}{chapter}{Title Page}
+\thispagestyle{plain}
+\begin{center}
+\textbf{\Huge The iPad Crusher \vfill
+	\large Project Report \\ \bigskip
+	for \\ \bigskip
+	CS2309 CS Research Methodology \\ \bigskip
+	AY15/16 Sem 1} \vfill \vfill
+\large Members: \\ \bigskip
+\begin{minipage}[t]{0.3\textwidth}
+\begin{flushleft}
+Lai Huang Dung \\ \bigskip
+Lim Kiat \\ \bigskip
+Liu Xinan \\ \bigskip
+Tran Tien Dat
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\begin{flushright}
+A0123456X \\ \bigskip
+A0123456X \\ \bigskip
+A0130195M \\ \bigskip
+A0123456X
+\end{flushright}
+\end{minipage} \vfill
+Supervisor: \\ \bigskip
+Prof. Sim Khe Chai
+\end{center}
+\end{titlepage}
+%===============================================================================
+% End of Title Page
+%===============================================================================
+
+%===============================================================================
+% Start of Abstract
+%===============================================================================
+\begin{abstract}
+\setcounter{page}{2}
+\thispagestyle{plain}
+\onehalfspacing
+\addcontentsline{toc}{chapter}{Abstract}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus. \\
+
+\subsubsection*{Subject Descriptors:\\}
+\begin{description}[labelindent=1cm]
+	\item[D.2.7] Distribution, Maintenance, and Enhancement
+	\item[D.2.11] Software Architectures 
+	\item[H.5.2] User Interfaces
+\end{description}
+
+\subsubsection{Keywords:}
+\begin{description}[labelindent=1cm]
+	\item Architecture, User Interface, Data Analysing
+\end{description}
+
+\subsubsection{Implementation Software and Hardware:}
+\begin{description}[labelindent=1cm]
+	\item Python, Ruby
+\end{description}
+\end{abstract}
+%===============================================================================
+% End of Abstract
+%===============================================================================
+
+%===============================================================================
+% Start of Acknowledgements
+%===============================================================================
+\renewcommand{\abstractname}{Acknowledgements}
+\begin{abstract}
+\setcounter{page}{3}
+\thispagestyle{plain}
+\onehalfspacing
+\addcontentsline{toc}{chapter}{Acknowledgements}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
+\end{abstract}
+%===============================================================================
+% End of Acknowledgements
+%===============================================================================
+
+\onehalfspacing
+\tableofcontents
+\thispagestyle{empty}
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\pagenumbering{arabic}
+
+%===============================================================================
+% Start of Chapter 1
+%===============================================================================
+\chapter{Introduction}
+\setcounter{page}{1}
+\section{About the project}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
+
+%===============================================================================
+% End of Chapter 1
+%===============================================================================
+
+%===============================================================================
+% Start of Chapter 2
+%===============================================================================
+\chapter{Existing work}
+I put random chapter titles here. Feel free to change. And this is how you cite a source \cite{randomblogpost}.
+
+\section{What does the fox say?}
+\subsection{Introduction}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus. \\\\
+
+%===============================================================================
+% End of Chapter 2
+%===============================================================================
+
+%===============================================================================
+% Start of Chapter 3
+%===============================================================================
+\chapter{Approach}
+\section{In the technical aspect}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
+
+%===============================================================================
+% End of Chapter 3
+%===============================================================================
+
+%===============================================================================
+% Start of Chapter 4
+%===============================================================================
+\chapter{Conclusion}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
+
+%===============================================================================
+% End of Chapter 4
+%===============================================================================
+
+%===============================================================================
+% Start of References
+%===============================================================================
+\renewcommand{\bibname}{References}
+\begin{thebibliography}{1} \addcontentsline{toc}{chapter}{References}
+	\bibitem{randomblogpost} Egg Drop Puzzle. http://michaelbrundage.com/note/2014/04/26/egg-drop/
+\end{thebibliography}
+
+%===============================================================================
+% End of References
+%===============================================================================
+\end{document}
