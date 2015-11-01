@@ -73,24 +73,21 @@ Prof. Sim Khe Chai
 \thispagestyle{plain}
 \onehalfspacing
 \addcontentsline{toc}{chapter}{Abstract}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus. \\
+In this project, we were asked to design the game logic for ``iPad Crusher'', an iOS game that Prof. Sim is developing as an adaptation to the Egg Dropping Problem. Given a certain number of iPads and strength levels, the player is asked to find the lowest strength level that would break an iPad. Similar to the Egg Dropping Puzzle, the goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. \\\\
+In this report we present two approaches in designing the game logic, the first is to generate all the decision trees and design the game logic according to the decision trees. The other one is to just generate the cost table and make decision based on the costs. We would discuss the advantages and disadvantages of each of the approaches, as well as different implementations of them. Lastly we would discuss some interesting extension of the problem such as adding an extra cost for breaking an iPad, and a variant of it with unlimited number of iPads, etc. In the end we conclude that for the original game logic, the cost table approach would be the better choice, whereas for some extensions, the decision tree approach would be better.
 
 \subsubsection*{Subject Descriptors:\\}
 \begin{description}[labelindent=1cm]
-	\item[D.2.7] Distribution, Maintenance, and Enhancement
-	\item[D.2.11] Software Architectures 
-	\item[H.5.2] User Interfaces
+	\item[I.2.8] Dynamic Programming
+	\item[K.8.0] Games
+	\item[G.2.1] Combinatorics
 \end{description}
 
 \subsubsection{Keywords:}
 \begin{description}[labelindent=1cm]
-	\item Architecture, User Interface, Data Analysing
+	\item Game Logic, Egg Dropping, Dynamic Programming, Combinatorics
 \end{description}
 
-\subsubsection{Implementation Software and Hardware:}
-\begin{description}[labelindent=1cm]
-	\item Python, Ruby
-\end{description}
 \end{abstract}
 %===============================================================================
 % End of Abstract
