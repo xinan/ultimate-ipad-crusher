@@ -8,3 +8,4 @@ The iPad Crusher Project Report for CS2309 CS Research Methodology.
 * Table of contents is auto generated. If your `pdflatex` cannot get it compiled correctly, don't worry I will compile it.
 * If you encounter formatting problems you can just leave the text there I will format it.
 * Subject Descriptors can be found in http://www.acm.org/about/class/ccs98-html. But that is not important. Leave it there until we have time to do it, otherwise just delete that section.
+* If your `LaTeX` compiler generates some other files in the directory, remember to add them into `.gitignore`.
