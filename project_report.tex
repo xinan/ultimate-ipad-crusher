@@ -178,11 +178,25 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 %===============================================================================
 % Start of Chapter 5
 %===============================================================================
-\chapter{The online combinatorics appraoch}
-A short brief description of the approach here.
+\chapter{The online combinatorics approach}
+Besides the Dynamic Programming approach to this iPad Crushing problem, we also found an interesting alternative approach online using Combinatorics to calculate how many times we need to crush the iPad in the worst case \cite{randomblogpost}. The original author describes it as a solution to the classic Egg Dropping Puzzle. Here, we formulate the solution in terms of our iPad Crushing problem and make some corrections.
 
-\section{Correctness}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
+\section{Theory}
+Before we begin discussing the solution, we need to reiterate our definition of a strategy to solve the iPad Crushing problem. A strategy is a binary decision tree, with each node representing a level of strength that we will use to try crushing the iPad. Following the left branch represents the scenario that the iPad survives the crush, while the right branch represents the scenario when the iPad does not survive the crush. A leaf of the tree represents the the minimum level of strength to crush the iPad that we have found.
+
+The number of crushings we need to do to determine the minimum strength level to crush the iPad is the length of a path from the root node to a leaf. Hence, the number of crushings in the worst case is just the height of the decision tree. The goal of the game is to find a decision tree with minimum height.
+
+Similar to the dynamic programming approach, given the number of levels $L$ and the number of iPads $N$, we will need to find the minimum height $H$ of a decision tree to solve this iPad Crushing Problem. However, we will do this by formulating a slightly different problem. This is quite similar to the proof that all comparison-based sorting algorithms need to make at least $\log n$ comparisons in the worst case. An iPad Crushing problem with $N$ iPads and $L$ strength levels has a decision tree of height $H$. We will find the maximum $L$, given $N$ and $H$.
+
+We will count the number of possible paths in the decision tree of height $H$. The number of paths is equal to the number of  leaves, which is exactly $L+1$, as there are $L+1$ possible values for the minimum strength level to crush the iPad.
+
+In addition, every path from the root node to a leaf can branch to the right (the iPad does not survive) at most $N$ times. Hence each path can be represented by a binary sequence of 1 (left) and 0 (right), with at most $N$ zeros (rights). Since the height of our decision tree is $H$, the length of each path is at most $H$. For a path with length less than $H$, we can append it with ones such that the length of its binary sequence representation is always $H$. Hence we have a bijection between the set of possible paths and the set of binary sequence of length $H$ with at most $N$ zeros. There are ${H \choose k}$ binary sequences of length $H$ with $k$ zeros. Therefore, the maximum number of paths in a decision tree of height $H$ is $\sum_{k=0}^{N} {H \choose k}$.
+
+Combine the previous two paragraphs, we arrive at the inequality:
+
+\[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
+
+So back to our original problem, given N and L, we will find the minimum H such that the above inequality holds.
 
 \section{Pros and Cons}
 
