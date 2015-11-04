@@ -3,6 +3,9 @@
 \usepackage{enumitem}
 \usepackage{setspace}
 \usepackage[none]{hyphenat}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -195,9 +198,20 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 %===============================================================================
 \chapter{Interesting extensions}
 \section{iPad with fixed cost}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
-
-\section{iPad with dynamic costs}
+What happens if we have to pay a penalty for each crushed iPad. How would it affect the game logic?
+\\\\To tackle this extension, we realise we can re-use our cost table approach, but modify the comparison step slightly to also include the fixed cost. 
+\\\\Using the table cost approach, we would calculate the cost of the whole DP table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
+\\\\The pseudo code for how the cost values in the DP table is as follows
+\begin{algorithm}
+        \caption{Calculate the cost table for fixed iPad cost}
+        \begin{algorithmic}[1]
+            \REQUIRE N, L, iPadCost
+            \STATE Initialise a 2D table DP[N+1][L+1]
+            \STATE For all table cells (n, l) where n = 1, initialise the value of the cell to be 1 + iPadCost
+            \STATE For all table cells (n, l) where L = 1, initialise the value of the cell to be 0
+            \STATE For all other tables cell (n, l) , the value at that cell is equal to min(1 + max(DP[x-1][n-1] + iPadCost, DP[L-x][n])) for $1 \leq x \leq l$
+        \end{algorithmic}
+\end{algorithm}
 
 %===============================================================================
 % End of Chapter 6
