@@ -193,15 +193,33 @@ Similar to the dynamic programming approach, given the number of levels $L$ and 
 
 We will count the number of possible paths in the decision tree of height $H$. The number of paths is equal to the number of  leaves, which is exactly $L+1$, as there are $L+1$ possible values for the minimum strength level to crush the iPad.
 
-In addition, every path from the root node to a leaf can branch to the right (the iPad does not survive) at most $N$ times. Hence each path can be represented by a binary sequence of 1 (left) and 0 (right), with at most $N$ zeros (rights). Since the height of our decision tree is $H$, the length of each path is at most $H$. For a path with length less than $H$, we can append it with ones such that the length of its binary sequence representation is always $H$. Hence we have a bijection between the set of possible paths and the set of binary sequence of length $H$ with at most $N$ zeros. There are ${H \choose k}$ binary sequences of length $H$ with $k$ zeros. Therefore, the maximum number of paths in a decision tree of height $H$ is $\sum_{k=0}^{N} {H \choose k}$.
+In addition, every path from the root node to a leaf can branch to the right (the iPad does not survive) at most $N$ times. Hence each path can be represented by a binary sequence of 1 (left) and 0 (right), with at most $N$ zeros (rights). Since the height of our decision tree is $H$, the length of each path is at most $H$. For a path with length less than $H$, we can append it with ones such that the length of its binary sequence representation is always $H$. This is a one-to-one transformation because no path's binary sequence can be contained in another. Hence we have a bijection between the set of possible paths and the set of binary sequence of length $H$ with at most $N$ zeros. There are ${H \choose k}$ binary sequences of length $H$ with $k$ zeros. Therefore, the maximum number of paths in a decision tree of height $H$ is $\sum_{k=0}^{N} {H \choose k}$.
 
-Combine the previous two paragraphs, we arrive at the inequality:
+Combine the previous two paragraphs, we arrive at the inequality: \[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
 
-\[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
+So back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
 
-So back to our original problem, given N and L, we will find the minimum H such that the above inequality holds.
+\section{Algorithm}
+Based on the theory discussed in the previous section, together with the fact that $H \geq \log L$ since the decision tree is a binary tree, we formulate the following algorithm to calculate the cost in the worst case of the iPad Crushing problem.
 
-\section{Pros and Cons}
+\begin{algorithm}
+        \caption{Calculate the cost of the iPad Crushing problem with N iPads, L strength levels}
+        \begin{algorithmic}[1]
+            \REQUIRE N, L
+	\STATE $H \leftarrow \lceil \log L\rceil$
+	\STATE $sum \leftarrow \sum_{k=0}^{N} {H \choose k}$
+	\WHILE {$sum < L+1$}
+		\STATE $H \leftarrow H+1$
+		\STATE $sum \leftarrow \sum_{k=0}^{N} {H \choose k}$
+	\ENDWHILE
+	\RETURN $H$
+        \end{algorithmic}
+\end{algorithm}
+
+\section{Discussion}
+We can use the algorithm outlined in the previous section to fill in our $N \times L$ DP table. The running time of this algorithm is dependent on the size of the answer it gets, which grows slower than $O(L)$ - the cost to fill in one entry for the dynamic programming approach\footnote{This is our observation. We do not have enough mathematical knowledge to prove it.}. Hence, we would expect that this algorithm runs faster than the dynamic programming one. Our tests verify this hypothesis. Therefore, an advantage of this approach would be its faster running time.
+
+However, the downside of this approach is that it is harder to tweak to solve modified versions of the iPad Crushing problem. We tried to tweak it to solve the problem when the cost of an iPad is 5. What we have come up with is, to replace each branch to the right with 5 consecutive branchings to the right. Hence the total number of possible paths will be the number of binary sequences of length $H$ such that zeros can only appear in group of 5, and there are at most $N$ groups of 5 zeros. To solve this, we need to consider a group of 5 zeros as one units (one 0), which decreases the length of the sequence to $H - 4 \times number\_of\_groups$. This gives us a more complicated inequality: \[\sum_{k=0}^{N} {H-4k \choose k} \geq L+1\]
 
 %===============================================================================
 % End of Chapter 5
