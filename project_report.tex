@@ -199,9 +199,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 \chapter{Interesting extensions}
 \section{iPad with fixed cost}
 What happens if we have to pay a penalty for each crushed iPad. How would it affect the game logic?
-\\\\To tackle this extension, we realise we can re-use our cost table approach, but modify the comparison step slightly to also include the fixed cost. 
-\\\\Using the table cost approach, we would calculate the cost of the whole DP table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
-\\\\The pseudo code for how the cost values in the DP table is as follows
+To tackle this extension, we realise we can re-use our cost table approach, but modify the comparison step slightly to also include the fixed cost. 
+Using the table cost approach, we would calculate the cost of the whole DP table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
+The pseudo code to calculate the DP table is as follows
 \begin{algorithm}
         \caption{Calculate the cost table for fixed iPad cost}
         \begin{algorithmic}[1]
@@ -212,7 +212,23 @@ What happens if we have to pay a penalty for each crushed iPad. How would it aff
             \STATE For all other tables cell (n, l) , the value at that cell is equal to min(1 + max(DP[x-1][n-1] + iPadCost, DP[L-x][n])) for $1 \leq x \leq l$
         \end{algorithmic}
 \end{algorithm}
-
+We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
+\section{iPad with dynamic cost}
+Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
+\\\\We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped
+Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table approach to pre-calculate the DP cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
+Therefore, to extend the solution for the fixed cost problem to also work in this, we can also store an attribute denoting the number of Ipad crushed.
+The pseudo code to calculate the DP table is as follows
+\begin{algorithm}
+        \caption{Calculate the cost table for fixed iPad cost}
+        \begin{algorithmic}[1]
+            \REQUIRE N, L, iPadCost
+            \STATE Initialise a 2D table DP[N+1][L+1]
+            \STATE For all table cells (n, l) where n = 1, initialise the value of the cell to be 1 + iPadCost
+            \STATE For all table cells (n, l) where L = 1, initialise the value of the cell to be 0
+            \STATE For all other tables cell (n, l) , the value at that cell is equal to min(1 + max(DP[x-1][n-1] + iPadCost, DP[L-x][n])) for $1 \leq x \leq l$
+        \end{algorithmic}
+\end{algorithm}
 %===============================================================================
 % End of Chapter 6
 %===============================================================================
