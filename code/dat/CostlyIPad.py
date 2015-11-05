@@ -18,7 +18,8 @@ def initGame(userN, userL):
 def makeDPTable(L):
     table = [0 for x in range(L+1)]
     for l in range(1, L+1):
-        table[l] = min([max(5 + table[l-1],
+        table[l] = min([max(1 + 5 + table[l-1],
                             1 + table[L-l])
                         for x in range(1, l+1)])
+    return table
     
