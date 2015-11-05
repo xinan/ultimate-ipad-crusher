@@ -125,8 +125,7 @@ We could like to thank Prof. Sim Khe Chai for the patience and guidance along th
 %===============================================================================
 \chapter{Introduction}
 \setcounter{page}{1}
-\section{About the project}
-The egg dropping puzzle is a well known one and an example most often used to illustrate dynamic programming as a concept in computer science. As an adaptation to the egg dropping puzzle, we were tasked to design the game logic for "iPad Crusher", an iOS game that our Prof. is developing. The problem involves $N$ number of iPads available and $L$ strength levels the player can use to crush the iPads. The goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. In the process leading up to the actual formulation of the game logic, we were guided to first come up with a brute-force approach to finding the best strategy. Thereafter, since the egg dropping puzzle can be solved by using dynamic programming, we have done the same for our problem. With the dynamic programming solution, we were then able to design the game logic, which determines whether the iPad should survive, given the strength level that the user specifies. The game logic is one where it always simulates the worst-case scenario. This means that when a player chooses a strength level he/she wishes to use, the game logic will decide whether to crush the iPad depending on the choice that will result in more tries needed using a best strategy. As a further extension, we explored the case where we have to factor in a fixed iPad cost for each crushing of an iPad, as well as when the iPad cost changes as different numbers of iPads get crushed.
+The egg dropping puzzle is a well known one and an example most often used to illustrate dynamic programming as a concept in computer science. As an adaptation to the egg dropping puzzle, we were tasked to design the game logic for ``iPad Crusher'', an iOS game that our Prof. is developing. The problem involves $N$ number of iPads available and $L$ strength levels the player can use to crush the iPads. The goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. In the process leading up to the actual formulation of the game logic, we were guided to first come up with a brute-force approach to finding the best strategy. Thereafter, since the egg dropping puzzle can be solved using dynamic programming, we have done the same for our problem. With the dynamic programming solution, we were then able to design the game logic, which determines whether the iPad should survive, given the strength level that the user specifies. The game logic is one where it always simulates the worst-case scenario. This means that when a player chooses a strength level he/she wishes to use, the game logic will decide whether to crush the iPad depending on the choice that will result in more tries needed using a best strategy. As a further extension, we explored the case where we have to factor in a fixed iPad cost for each crushing of an iPad, as well as when the iPad cost changes as different numbers of iPads get crushed.
 
 %===============================================================================
 % End of Chapter 1
@@ -150,13 +149,91 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 % Start of Chapter 3
 %===============================================================================
 \chapter{The cost table approach}
-A short brief description of the approach here.
+The first approach that came into our mind was to pre-compute an $N \times L$ two dimensional table containing the number of crushing needed for $N$ number of iPads and $L$ strength levels in the worst-case scenario. When the user choose a certain strength level, we will look up the costs for the upper sub-problem and the lower sub-problem in the table, compare them to decide whether the iPad should break at that strength level or not.
+
+\section{Detailed description}
+Let us define the cost of a game state $(N, L)$ to be the minimum number of crushing using $N$ number of iPads and for $L$ strength levels. \\\\
+In a game level with $N$ number of iPads and $L$ strength levels, the user chooses to crush at strength level $x$:
+\begin{itemize}
+\item if the iPad breaks, the game state becomes $N - 1$ number of iPads and $x - 1$ strength levels.
+\item if the iPad does not break, the game state becomes $N$ number of iPads and $L - x$ strength levels.
+\end{itemize}
+We can compute the cost of $(N, L)$ by recursively compute all possible sub-problems, the cost of $(N, L)$ would be $(1 + \text{cost of the minimum-cost sub-problem})$. Here are some base cases:
+\begin{itemize}
+\item if $N = 1$, the cost would be $L$ because the only way to find the correct strength is to try one by one from the lowest strength level to the highest strength level. In the worst-case, the iPad only breaks at the highest strength level, so it will need $L$ number of crushing.
+\item if $L = 1$, the cost will be 1 since there is only one strength level to be crushed at.
+\end{itemize}
+Let $C(N, L)$ denote the cost for $N$ iPads and $L$ strength levels. \\
+The recurrence is
+\[
+C(N, L) = 
+\begin{cases}
+L & \text{if $N = 1$} \\
+1 & \text{if $L = 1$} \\
+1 + min_{x \in [1, L]}(max(C(N - 1, x - 1), C(N, L - x))) & \text{otherwise}
+\end{cases}
+\]
+So all we need is to compute a $N \times L$ two dimensional table for each possible combination of $N$ and $L$. For the game logic, if the user chooses to crush at strength level $x$, we will look up 
+\begin{itemize}
+\item $C(N - 1, x - 1)$ (cost of the remaining sub-problem if the iPad breaks)
+\item $C(N, L - x)$ (cost of the remaining sub-problem if the iPad does not break)
+\end{itemize}
+in the cost table, if $C(N - 1, x - 1) > C(N, L - x)$, i.e. it will require more cost if the iPad breaks, then we will break the iPad. If $C(N - 1, x - 1) < C(N, L - x)$, i.e. it requires more cost if the iPad does not break, then we will not break the iPad. For cases when $C(N - 1, x - 1) = C(N, L - x)$, we can randomize the decision so that the game path will not always be the same.
 
 \section{A brute force algorithm}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus.
+A naive way to implement this approach would be to compute every cell in the $N \times L$ cost table individually using the following algorithm:
+\begin{algorithm}
+\caption{$C(N, L)$}
+\begin{algorithmic}[1]
+\IF{$N = 1$}
+	\RETURN $L$
+\ELSIF{$L = 1$}
+	\RETURN $1$
+\ENDIF
+\STATE $best \leftarrow \infty$
+\FORALL{$x \in [1, L]$}
+	\STATE $result = max(C(N - 1, x - 1), C(N, L - x))$
+	\IF{$result < best$}
+		\STATE $best \leftarrow result$
+	\ENDIF
+\ENDFOR
+\RETURN $best + 1$
+\end{algorithmic}
+\end{algorithm}
+~\\
+Clearly this algorithm runs in exponential time. In fact, computing the cost for a game state $(N, L)$ involves the computation of game states with lower $N$ or lower $L$. Therefore there is a lot of repeated computation here. In the next section we will talk about how to avoid such redundant computations.
 
 \section{A dynamic programming algorithm}
-
+Based on the naive brute-force algorithm, we have derived a dynamic programming algorithm which avoids the unnecessary repeated computations and makes computing the cost for large problems more practical. \\\\
+As we mentioned in the last section, using the brute-force algorithm, the computation of a larger problem involves computing a number of smaller problems, therefore it exhibits the optimal substructure property. Moreover, different problems might need to compute the same sub-problems, therefore it exhibits the overlapping sub-problem property. Hence, we can speed up the computation of it by using dynamic programming. \\\\
+Instead of computing each cell individually and fill in the table, we initialize all the base cases and then fill in the table row by row and make use the already computed values to compute the new values. Here's the pseudo-code:
+\begin{algorithm}
+\caption{$makeTable(N, L)$}
+\begin{algorithmic}[1]
+\STATE $table \leftarrow 2DTable(N, L)$
+\FOR{$i = 1$ \TO $N$}
+	\STATE $table[i][1] = 1$
+\ENDFOR
+\FOR{$i = 1$ \TO $L$}
+	\STATE $table[1][i] = i$
+\ENDFOR
+\FOR{$i = 1$ \TO $N$}
+	\FOR{$j = 1$ \TO $L$}
+		\STATE $best \leftarrow \infty$
+		\FOR{$k = 1$ \TO $j$}
+			\STATE $result = max(table(i - 1, k - 1), table(i, j - x))$
+			\IF{$result < best$}
+				\STATE $best \leftarrow result$
+			\ENDIF
+		\ENDFOR
+		\STATE $table[i][j] = best + 1$
+	\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+~\\
+Using the dynamic programming algorithm, we can reduce the running time of the algorithm to $O(NL^2)$. This is because for each of the $N \times L$ entries, we only need at most $L$ comparisons to get the result. \\\\
+It is capable of computing the cost with hundreds of strength levels and tens of iPads, whereas the brute-force algorithm is only capable of computing problems with around 20 strength levels and several iPads.
 \section{Pros and Cons}
 
 %===============================================================================
