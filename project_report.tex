@@ -237,15 +237,37 @@ We can also modify this approach to solve the problem when there are inifinitely
 
 What happens if we have to pay a penalty for each crushed iPad. How would it affect the game logic?
 
-
-
 To tackle this extension, we realise we can re-use our cost table approach, but modify the comparison step slightly to also include the fixed cost. 
 
 Using the table cost approach, we would calculate the cost of the whole DP table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
 
+In this extension, we consider two scenarios: The number of iPads is finite or infinite
+
+\subsection{Finite number of iPads}
+
+In the case that there is a finite number of iPads, the DP table will be a 2D array, where the number of rows represent the number of iPads, and the number of columns represents the number of levels
+
 The pseudo code to calculate the DP table is as follows
 \begin{algorithm}
-        \caption{Calculate the cost table for fixed iPad cost}
+        \caption{Calculate the cost table for fixed iPad cost (finite number of iPads)}
+        \begin{algorithmic}[1]
+            \REQUIRE L, iPadCost
+            \STATE Initialise a 1D table DP[L+1], where the value of each cell is INFINITY
+            \STATE Let DP[0] be 0
+            \STATE Let DP[1] be iPadCost
+            \STATE For all other tables cells DP[n] , the value at that cell is equal to min(1 + max(DP[x-1] + iPadCost, DP[L-x])) for $1 \leq x \leq l$
+        \end{algorithmic}
+\end{algorithm}
+
+We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
+
+\subsection{Infinite Number of iPads}
+
+In the case that there is an infinite number of iPads, the DP table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the level. The number of cells in the DP table (or in this case the DP row) hence represents the number of levels
+
+The pseudo code to calculate the DP table is as follows
+\begin{algorithm}
+        \caption{Calculate the cost table for fixed iPad cost (finite number of iPads)}
         \begin{algorithmic}[1]
             \REQUIRE N, L, iPadCost
             \STATE Initialise a 2D table DP[N+1][L+1], where the value of each cell is INFINITY
@@ -255,7 +277,6 @@ The pseudo code to calculate the DP table is as follows
         \end{algorithmic}
 \end{algorithm}
 
-We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
 \section{iPad with dynamic cost}
 Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
 We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped.
