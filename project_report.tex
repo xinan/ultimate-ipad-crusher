@@ -365,11 +365,9 @@ Using the table cost approach, we would calculate the cost of the whole DP table
 
 In this extension, we consider two scenarios: The number of iPads is finite or infinite
 
-\subsection{Finite number of iPads}
-
 In the case that there is a finite number of iPads, the DP table will be a 2D array, where the number of rows represent the number of iPads, and the number of columns represents the number of levels
 
-The pseudo code to calculate the DP table is as follows
+The pseudo code to calculate the DP table for finite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for fixed iPad cost (finite number of iPads}
@@ -406,11 +404,9 @@ The pseudo code to calculate the DP table is as follows
 
 We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
 
-\subsection{Infinite Number of iPads}
-
 In the case that there is an infinite number of iPads, the DP table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the level. The number of cells in the DP table (or in this case the DP row) hence represents the number of levels
 
-The pseudo code to calculate the DP table is as follows
+The pseudo code to calculate the DP table for infinite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for fixed iPad cost (infinite number of iPads)}
@@ -440,10 +436,13 @@ Let's make the problem even more complex. How do we tackle the problem if the co
 We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped.
 Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table. approach to pre-calculate the DP cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
 Therefore, to extend the solution for the fixed cost problem to also work in this, we can also store an attribute denoting the number of Ipad crushed. Each cell will then have two attributes, the cost and the number of iPad crushed
-The pseudo code to calculate the DP table is as follows
+
+We again consider the two scenarios where there are finite and infinite number of iPads
+
+The pseudo code to calculate the DP table for finite number of iPads is as follows
 
 \begin{algorithm}[H]
-\caption{Calculate the cost table for dynamic iPad cost}
+\caption{Calculate the cost table for dynamic iPad cost (finite number of iPads)}
 \begin{algorithmic}[1]
 \REQUIRE N, L, f
 \STATE $table \leftarrow 2DTable(N, L)$
@@ -468,7 +467,6 @@ The pseudo code to calculate the DP table is as follows
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
 			\STATE $ipadCostWhenCrushed =  f(table[k-1][i-1].numberOfiPadCrushed +1)$
-			\STATE $result = max(table[i - 1][k - 1] + iPadCost, table[i][j - k])$
 			\IF{$table[j-k][i].cost >= table[k-1][i-1].cost + ipadCostWhenCrushed$}
 				\STATE $resultCost= table[j-k][i].cost$
 				\STATE resultNumberOfiPadCrushed $= table[j-k][i].numberOfiPadCrushed$
@@ -482,6 +480,41 @@ The pseudo code to calculate the DP table is as follows
 		\ENDFOR
 		\STATE $table[i][j].cost = best + 1$
 	\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+The pseudo code to calculate the DP table for infinite number of iPads is as follows
+
+\begin{algorithm}[H]
+\caption{Calculate the cost table for dynamic iPad cost (infinite number of iPads)}
+\begin{algorithmic}[1]
+\REQUIRE L, f
+\STATE $table \leftarrow 1DTable(L)$
+\FOR{$i = 0$ \TO $L$}
+	\STATE $table[i].cost = \infty$
+	\STATE $table[i].numberOfiPadCrushed = 0$
+\ENDFOR
+\STATE $table[0].cost = 0$
+\STATE $table[0].numberOfiPadCrushed  = 0$
+\STATE $table[1] = f(1)$
+\STATE $table[1].numberOfiPadCrushed  = 1$
+\FOR{$i = 2$ \TO $L$}
+	\STATE $best \leftarrow \infty$
+	\FOR{$k = 1$ \TO $i$}
+		\STATE $ipadCostWhenCrushed =  f(table[k-1].numberOfiPadCrushed +1)$
+		\IF{$table[i-k].cost >= table[k-1].cost + ipadCostWhenCrushed$}
+			\STATE $resultCost= table[i-k].cost$
+			\STATE resultNumberOfiPadCrushed $= table[i-k].numberOfiPadCrushed$
+		\ELSE
+			\STATE $resultCost= table[k-1].cost + ipadCostWhenCrushed$
+			\STATE $resultNumberOfiPadCrushed = table[k-1].$numberOfiPadCrushed $+ 1$	
+		\ENDIF
+		\IF{$resultCost < best$}
+			\STATE $best \leftarrow resultCost$
+		\ENDIF
+	\ENDFOR
+	\STATE $table[i].cost = best + 1$
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
