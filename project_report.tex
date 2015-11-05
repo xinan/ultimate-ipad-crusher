@@ -195,7 +195,7 @@ A naive way to implement this approach would be to compute every cell in the $N 
 	\RETURN $1$
 \ENDIF
 \STATE $best \leftarrow \infty$
-\FORALL{$x \in [1, L]$}
+\FORALL{$k \in [1, L]$}
 	\STATE $result = max(C(N - 1, x - 1), C(N, L - x))$
 	\IF{$result < best$}
 		\STATE $best \leftarrow result$
@@ -225,7 +225,7 @@ Instead of computing each cell individually and fill in the table, we initialize
 	\FOR{$j = 1$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
-			\STATE $result = max(table(i - 1, k - 1), table(i, j - x))$
+			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])$
 			\IF{$result < best$}
 				\STATE $best \leftarrow result$
 			\ENDIF
