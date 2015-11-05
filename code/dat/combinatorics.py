@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from math import log
+from math import log, floor
 from scipy.misc import comb
 
 def trials(L, N):
@@ -15,6 +15,14 @@ def costlyiPad(L, N):
   H = int(log(L, 2))
   while (True):
     total = sum(comb(H-5*k, k) for k in range(0, N + 1))
+    if (total >= L+1):
+      return H
+    H += 1
+
+def costlyInf(L):
+  H = int(log(L, 2))
+  while (True):
+    total = sum(comb(H-5*k, k) for k in range(0, floor(H/5) + 1))
     if (total >= L+1):
       return H
     H += 1

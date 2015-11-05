@@ -223,6 +223,8 @@ We can use the algorithm outlined in the previous section to fill in our $N \tim
 
 However, the downside of this approach is that it is harder to tweak to solve modified versions of the iPad Crushing problem. We tried to tweak it to solve the problem when the cost of an iPad is 5. What we have come up with is, to replace each branch to the right with 6 consecutive branchings to the right. Hence the total number of possible paths will be the number of binary sequences of length $H$ such that zeros can only appear in group of 6, and there are at most $N$ groups of 6 zeros. To solve this, we need to consider a group of 6 zeros as one units (one 0), which decreases the length of the sequence to $H - 5 \times number\_of\_groups$. This gives us a more complicated inequality: \[\sum_{k=0}^{N} {H-5k \choose k} \geq L+1\]
 
+We can also modify this approach to solve the problem when there are inifinitely many available iPad for use. Instead of summing until $N$, we can sum until ${H-5k \choose k}$ still makes sense, that is until $\lfloor H/5 \rfloor$. This gives us the inequality: \[\sum_{k=0}^{\lfloor H/5 \rfloor} {H-5k \choose k} \geq L+1\]
+
 %===============================================================================
 % End of Chapter 5
 %===============================================================================
