@@ -177,7 +177,7 @@ L & \text{if $N = 1$} \\
 1 + min_{x \in [1, L]}(max(C(N - 1, x - 1), C(N, L - x))) & \text{otherwise}
 \end{cases}
 \]
-So all we need is to compute a $N \times L$ two dimensional table for each possible combination of $N$ and $L$. For the game logic, if the player chooses to crush at strength level $x$, we will look up 
+So all we need is to compute a $N \times L$ two dimensional cost table for each possible combination of $N$ and $L$. For the game logic, if the player chooses to crush at strength level $x$, we will look up 
 \begin{itemize}
 \item $C(N - 1, x - 1)$ (cost of the remaining sub-problem if the iPad breaks)
 \item $C(N, L - x)$ (cost of the remaining sub-problem if the iPad does not break)
@@ -196,12 +196,12 @@ A naive way to implement this approach would be to compute every cell in the $N 
 \ENDIF
 \STATE $best \leftarrow \infty$
 \FORALL{$k \in [1, L]$}
-	\STATE $result = max(C(N - 1, x - 1), C(N, L - x))$
+	\STATE $result = max(C(N - 1, x - 1), C(N, L - x))+1$
 	\IF{$result < best$}
 		\STATE $best \leftarrow result$
 	\ENDIF
 \ENDFOR
-\RETURN $best + 1$
+\RETURN $best$
 \end{algorithmic}
 \end{algorithm}
 ~\\
@@ -225,12 +225,12 @@ Instead of computing each cell individually to fill the table, we initialize all
 	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
-			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])$
+			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])+1$
 			\IF{$result < best$}
 				\STATE $best \leftarrow result$
 			\ENDIF
 		\ENDFOR
-		\STATE $table[i][j] = best + 1$
+		\STATE $table[i][j] = best$
 	\ENDFOR
 \ENDFOR
 \end{algorithmic}
@@ -352,7 +352,7 @@ Based on the theory discussed in the previous section, together with the fact th
 \end{algorithm}
 
 \section{Discussion}
-We can use the algorithm outlined in the previous section to fill in our $N \times L$ DP table. The running time of this algorithm is dependent on the size of the answer it gets. According to our test, this grows slower than $O(L)$ - the cost to fill in one entry for the dynamic programming approach, hence this combinatoric is faster than the dynamic programming approach. However, we do not have the necessary mathematical tools to prove this result rigorously. Nevertheless, an advantage of this approach would be its faster running time.
+We can use the algorithm outlined in the previous section to fill in our $N \times L$ cost table. The running time of this algorithm is dependent on the size of the answer it gets. According to our test, this grows slower than $O(L)$ - the cost to fill in one entry for the dynamic programming approach, hence this combinatoric is faster than the dynamic programming approach. However, we do not have the necessary mathematical tools to prove this result rigorously. Nevertheless, an advantage of this approach would be its faster running time.
 
 At first, we thought that the downside of this approach would be its inflexibility, i.e. it is harder to tweak to solve modified versions of the iPad Crushing problem. However, we actually manage to tweak it to solve the modified versions as well.
 
@@ -360,7 +360,7 @@ To solve the problem when the cost of an iPad is a constant $c$, we need replace
 
 Even when there are inifinitely many available iPad for use, the inequality can be modified to solve the problem. Instead of summing until $N$, we can sum until ${H-ck \choose k}$ still makes sense, that is until $\lfloor H/c \rfloor$. This gives us the inequality: \[\sum_{k=0}^{\lfloor H/c \rfloor} {H-ck \choose k} \geq L+1\]
 
-A modification can also be made to solve the problem with dynamic iPad cost. Let $f(x)$ be the function that return the cost of the $x^{th}$ iPad crushed. We define the function $S(x)$ as the sum of the cost of the 1st $x$ iPads crushed, i.e.: \[S(x) = \sum_{i=0}^x f(i)\] The core inequality essential to the combinatoric method will then become: \[\sum_{\substack{k \in \mathbb{Z}_{\geq 0}\\ S(k) < H}} {H-S(k) \choose k} \geq L+1\]
+A modification can also be made to solve the problem with dynamic iPad cost. Assume that there are infinite number of iPads. Let $f(x)$ be the function that return the cost of the $x^{th}$ iPad crushed. We define the function $S(x)$ as the sum of the cost of the 1st $x$ iPads crushed, i.e.: \[S(x) = \sum_{i=0}^x f(i)\] The core inequality essential to the combinatoric method will then become: \[\sum_{\substack{k \in \mathbb{Z}_{\geq 0}\\ S(k) < H}} {H-S(k) \choose k} \geq L+1\]
 
 %===============================================================================
 % End of Chapter 5
@@ -376,42 +376,34 @@ What happens if we have to pay a penalty for each crushed iPad. How would it aff
 
 To tackle this extension, we realise we can re-use our cost table approach, but modify the comparison step slightly to also include the fixed cost. 
 
-Using the table cost approach, we would calculate the cost of the whole DP table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
+Using the table cost approach, we would calculate the cost of the whole cost table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
 
 In this extension, we consider two scenarios: The number of iPads is finite or infinite
 
-In the case that there is a finite number of iPads, the DP table will be a 2D array, where the number of rows represent the number of iPads, and the number of columns represents the number of levels
+In the case that there is a finite number of iPads, the cost table will be a 2D array, where the number of rows represent the number of iPads, and the number of columns represents the number of levels
 
-The pseudo code to calculate the DP table for finite number of iPads is as follows
+The pseudo code to calculate the cost table for finite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for fixed iPad cost (finite number of iPads}
 \begin{algorithmic}[1]
 \REQUIRE N, L, iPadCost
-\STATE $table \leftarrow 2DTable(N, L)$
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $L$}
-		\STATE $table[i][j] = \infty$
-	\ENDFOR
-\ENDFOR
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $1$}
-		\STATE $table[i][j] = j*(1 + iPadCost)$
-	\ENDFOR
+\FOR{$i = 1$ \TO $N$}
+	\STATE $table[i][1] = 1+iPadCost$
 \ENDFOR
 \FOR{$i = 1$ \TO $L$}
-	\STATE $table[1][i] = i + iPadCost$
+	\STATE $table[1][i] = i+iPadCost$
 \ENDFOR
-\FOR{$i = 1$ \TO $N$}
-	\FOR{$j = 1$ \TO $L$}
+\FOR{$i = 2$ \TO $N$}
+	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
-			\STATE $result = max(table[i - 1][k - 1] + iPadCost, table[i][j - k])$
+			\STATE $result = max(table[i - 1][k - 1]+iPadCost, table[i][j - k]) + 1$
 			\IF{$result < best$}
 				\STATE $best \leftarrow result$
 			\ENDIF
 		\ENDFOR
-		\STATE $table[i][j] = best + 1$
+		\STATE $table[i][j] = best$
 	\ENDFOR
 \ENDFOR
 \end{algorithmic}
@@ -419,20 +411,16 @@ The pseudo code to calculate the DP table for finite number of iPads is as follo
 
 We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
 
-In the case that there is an infinite number of iPads, the DP table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the level. The number of cells in the DP table (or in this case the DP row) hence represents the number of levels
+In the case that there is an infinite number of iPads, the cost table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the level. The number of cells in the cost table hence represents the number of levels
 
-The pseudo code to calculate the DP table for infinite number of iPads is as follows
+The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for fixed iPad cost (infinite number of iPads)}
 \begin{algorithmic}[1]
 \REQUIRE L, iPadCost
 \STATE $table \leftarrow 1DTable(L)$
-\FOR{$i = 0$ \TO $L$}
-	\STATE $table[i] = \infty$
-\ENDFOR
-\STATE $table[0] = 0$
-\STATE $table[1] = iPadCost$
+\STATE $table[1] = iPadCost+1$
 \FOR{$i = 2$ \TO $L$}
 	\STATE $best \leftarrow \infty$
 	\FOR{$k = 1$ \TO $j$}
@@ -441,7 +429,7 @@ The pseudo code to calculate the DP table for infinite number of iPads is as fol
 			\STATE $best \leftarrow result$
 		\ENDIF
 	\ENDFOR
-	\STATE $table[i] = best + 1$
+	\STATE $table[i] = best$
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
@@ -449,12 +437,12 @@ The pseudo code to calculate the DP table for infinite number of iPads is as fol
 \section{iPad with dynamic cost}
 Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
 We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped.
-Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table. approach to pre-calculate the DP cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
+Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table approach to pre-calculate the cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
 Therefore, to extend the solution for the fixed cost problem to also work in this, we can also store an attribute denoting the number of Ipad crushed. Each cell will then have two attributes, the cost and the number of iPad crushed
 
 We again consider the two scenarios where there are finite and infinite number of iPads
 
-The pseudo code to calculate the DP table for finite number of iPads is as follows
+The pseudo code to calculate the cost table for finite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for dynamic iPad cost (finite number of iPads)}
@@ -499,7 +487,7 @@ The pseudo code to calculate the DP table for finite number of iPads is as follo
 \end{algorithmic}
 \end{algorithm}
 
-The pseudo code to calculate the DP table for infinite number of iPads is as follows
+The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for dynamic iPad cost (infinite number of iPads)}
