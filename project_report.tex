@@ -178,7 +178,7 @@ L & \text{if $N = 1$} \\
 1 + min_{x \in [1, L]}(max(C(N - 1, x - 1), C(N, L - x))) & \text{otherwise}
 \end{cases}
 \]
-So all we need is to compute a $N \times L$ two dimensional table for each possible combination of $N$ and $L$. For the game logic, if the player chooses to crush at strength level $x$, we will look up 
+So all we need is to compute a $N \times L$ two dimensional cost table for each possible combination of $N$ and $L$. For the game logic, if the player chooses to crush at strength level $x$, we will look up 
 \begin{itemize}
 \item $C(N - 1, x - 1)$ (cost of the remaining sub-problem if the iPad breaks)
 \item $C(N, L - x)$ (cost of the remaining sub-problem if the iPad does not break)
@@ -197,12 +197,12 @@ A naive way to implement this approach would be to compute every cell in the $N 
 \ENDIF
 \STATE $best \leftarrow \infty$
 \FORALL{$k \in [1, L]$}
-	\STATE $result = max(C(N - 1, x - 1), C(N, L - x))$
+	\STATE $result = max(C(N - 1, x - 1), C(N, L - x))+1$
 	\IF{$result < best$}
 		\STATE $best \leftarrow result$
 	\ENDIF
 \ENDFOR
-\RETURN $best + 1$
+\RETURN $best$
 \end{algorithmic}
 \end{algorithm}
 ~\\
@@ -226,12 +226,12 @@ Instead of computing each cell individually to fill the table, we initialize all
 	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 2$ \TO $j$}
-			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])$
+			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])+1$
 			\IF{$result < best$}
 				\STATE $best \leftarrow result$
 			\ENDIF
 		\ENDFOR
-		\STATE $table[i][j] = best + 1$
+		\STATE $table[i][j] = best$
 	\ENDFOR
 \ENDFOR
 \end{algorithmic}
@@ -240,9 +240,9 @@ Instead of computing each cell individually to fill the table, we initialize all
 Using the dynamic programming algorithm, we can reduce the running time of the algorithm to $O(NL^2)$. This is because for each of the $N \times L$ entries, we only need at most $L$ comparisons to get the result. \\\\
 This allows us to compute the cost of up to hundreds of strength levels and tens of iPads, whereas the brute-force algorithm is only capable of computing problems up to around 20 strength levels and several iPads.
 \section{Pros and Cons}
-The good thing about this cost table approach is that it is simple and fast. Since it is an offline approach, we can pre-compute the cost table and store it in the game, so that during the game, we will be able to make decisions quickly by simply looking up the table and make some comparisons. \\\\
-This approach also makes it easy for extensions like adding a cost for breaking an iPad, either fixed cost or dynamic cost, which we will talk about in Chapter 6. \\\\
-One disadvantage about this approach is that since we do not store the best strategies, there is no easy way for us to provide hints for the player. The only way we could provide hints will be to try every possible scenarios at that stage to compare and find the optimal one. We will discuss about an extension of this approach to support hints easily.
+The good thing about this cost table approach is that it is simple and fast. Since it is an offline approach, we can pre-compute the cost table and store it in the game, so that during the game, we will be able to make decisions quickly by simply looking up the table and making some comparisons. \\\\
+This approach also makes it easy for extensions, like adding either fixed cost or dynamic cost for breaking an iPad, which we will talk about in Chapter 6. \\\\
+One disadvantage about this approach is that since we do not store the best strategies, there is no easy way for us to provide hints for the player. The only way we could provide hints will be to try every possible scenarios at that stage to compare and find the optimal one. We will discuss about an extension of this approach to support hints easily in the next chapter.
 
 %===============================================================================
 % End of Chapter 3
@@ -262,7 +262,7 @@ Following an extensive discussion we had about this particular approach, we came
 
 Let us explore the reasoning behind these two conditions using Figure 4.1 on the following page. Figure 4.1 shows us two optimal decision trees, each of height 7, that can be used to solve the game state $(2,30)$. The number in each node represents the strength level to use as a best strategy. If the iPad gets crushed, we will move down to the right subtree, and if the iPad is not crushed, then we move down the left subtree. With a height of 7, it means that at the very least, a player must make 8 attempts in order to win the game, and any situation that results in less will be because of a wrong decision made by the game logic.
 
-The difference between these two trees is that tree (a) has 2 as its root node while tree (b) has 8, which is the optimum level that corresponds to the trees. The strength levels 2 and 8 are also the smallest and largest values of all the possible values that give an optimal decision tree of height 7. 
+The difference between these two trees is that tree \ref{fig:badtree} has 2 as its root node while tree \ref{fig:goodtree} has 8, which is the optimum level that corresponds to the trees. The strength levels 2 and 8 are also the smallest and largest values of all the possible values that give an optimal decision tree of height 7. 
 
 With these two examples, imagine that we take 2 as the optimum level. In the event that the player wants to use a strength level of 3 to crush the iPad, the game logic will decide to crush the iPad, leaving the player with 1 iPad left and only 2 more levels to test. This means that the game can be solved using 3 attempts (continue testing level 1 and level 2 using the last iPad), which is not the worst case scenario. However, if we take 8 as the optimum level, when the player uses a strength of level 3, the game logic will decide not to crush the iPad, which is the correct decision to make as it results in a worse scenario compared to the decision to crush the iPad. 
 
@@ -284,7 +284,7 @@ With these two examples, imagine that we take 2 as the optimum level. In the eve
 
 Furthermore, if the player specifies a strength of level 9 to use, the game logic will make the correct decision to crush the iPad, as it will mean that the player has 1 iPad and 8 more levels to test, which is a trivial state that requires 8 attempts to complete. This gives a total of 9 attempts, which is worse than the best strategy that uses 8 attempts.
 
-Now that we know we must choose 8 as our optimum level, what happens when the player chooses to use a strength level of 8? Should the game logic decide to crush the iPad or not? Will it make a difference? If we look at tree (b), we can quickly realise that if we make the game logic such that it does not crush the iPad, the player can follow down the decision tree and pick levels {8, 15, 20, 24, 27, 29, 30} subsequently to solve the game. This results in a total of 7 attempts, even though there is a longer path in our decision tree that needs 8 attempts. Therefore, by making the game logic such that it crushes when the optimum level is chosen, we can ensure that the player will always require at least $height + 1$ number of attempts to solve the game, which in this case will be 8.
+Now that we know we must choose 8 as our optimum level, what happens when the player chooses to use a strength level of 8? Should the game logic decide to crush the iPad or not? Will it make a difference? If we look at tree \ref{fig:goodtree}, we can quickly realise that if we make the game logic such that it does not crush the iPad, the player can follow down the decision tree and pick levels {8, 15, 20, 24, 27, 29, 30} subsequently to solve the game. This results in a total of 7 attempts, even though there is a longer path in our decision tree that needs 8 attempts. Therefore, by making the game logic such that it crushes when the optimum level is chosen, we can ensure that the player will always require at least $height + 1$ number of attempts to solve the game, which in this case will be 8.
 
 There is an exception, however, and it happens when the player has only one iPad left. With only one iPad left, the player has to use the minimum strength that he is unsure of up to that point of the game, and slowly increase one level by one level until he reaches the maximum strength level he is unsure of. Since the optimum level in this case is the minimum strength level, if we follow the conditions above and crush the iPad when the player chooses this minimum level, the game will end earlier than expected. The player will know that minimum level - 1 is the highest strength level he can use. In order to maximise the number of attempts needed for the player to determine the highest strength level, we must ensure that the game logic checks if there is only 1 iPad left, and in that event, decides not to crush the iPad when the player chooses the minimum strength level. If the player does not choose the minimum strength level, then the iPad will be crushed and the player would have lost the game since he is left with zero iPad and has not solved the game.
 
@@ -311,7 +311,7 @@ There are some minor disadvantages though, and they include the conditions that 
 Besides the Dynamic Programming approach to this iPad Crushing problem, we also found an interesting alternative approach online using Combinatorics to calculate how many times we need to crush the iPad in the worst case \cite{randomblogpost}. The original author describes it as a solution to the classic Egg Dropping Puzzle. Here, we formulate the solution in terms of our iPad Crushing problem and make some corrections.
 
 \section{Theory}
-Before we begin discussing the solution, we need to reiterate our definition of a strategy to solve the iPad Crushing problem. A strategy is a binary decision tree, with each node representing a level of strength that we will use to try crushing the iPad. Following the left branch represents the scenario that the iPad survives the crush, while the right branch represents the scenario when the iPad does not survive the crush. A leaf of the tree represents the the minimum level of strength to crush the iPad that we have found. Figure \ref{fig:comb-original} illustrates a decision tree when there are 3 iPads and 10 strength levels.
+Before we begin discussing the solution, we need to reiterate our definition of a strategy to solve the iPad Crushing problem. A strategy is a binary decision tree, with each node representing a level of strength that we will use to try crushing the iPad. Following the left branch represents the scenario that the iPad survives the crush, while the right branch represents the scenario when the iPad does not survive the crush. A leaf of the tree represents the minimum level of strength to crush the iPad that we have found. Figure \ref{fig:comb-original} illustrates a decision tree when there are 3 iPads and 10 strength levels.
 
 \begin{figure}
 	\centering
@@ -336,7 +336,7 @@ We will count the number of possible leaves in the decision tree of height $H$. 
 
 Obviously, the number of  leaves is exactly $L+1$, as there are $L+1$ possible values for the minimum strength level to crush the iPad. Thus, we arrive at the inequality: \[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
 
-So back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
+Going back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
 
 \section{Algorithm}
 Based on the theory discussed in the previous section, together with the fact that $H \geq \log L$ since the decision tree is a binary tree, we formulate the following algorithm to calculate the cost in the worst case of the iPad Crushing problem.
@@ -356,7 +356,7 @@ Based on the theory discussed in the previous section, together with the fact th
 \end{algorithm}
 
 \section{Discussion}
-We can use the algorithm outlined in the previous section to fill in our $N \times L$ DP table. The running time of this algorithm is dependent on the size of the answer it gets. According to our test, this grows slower than $O(L)$ - the cost to fill in one entry for the dynamic programming approach, hence this combinatoric is faster than the dynamic programming approach. However, we do not have the necessary mathematical tools to prove this result rigorously. Nevertheless, an advantage of this approach would be its faster running time.
+We can use the algorithm outlined in the previous section to fill in our $N \times L$ cost table. The running time of this algorithm is dependent on the size of the answer it gets. According to our test, this grows slower than $O(L)$ - the cost to fill in one entry for the dynamic programming approach, hence this combinatoric is faster than the dynamic programming approach. However, we do not have the necessary mathematical tools to prove this result rigorously. Nevertheless, an advantage of this approach would be its faster running time.
 
 At first, we thought that the downside of this approach would be its inflexibility, i.e. it is harder to tweak to solve modified versions of the iPad Crushing problem. However, we actually manage to tweak it to solve the modified versions as well.
 
@@ -364,7 +364,7 @@ To solve the problem when the cost of an iPad is a constant $c$, we need replace
 
 Even when there are inifinitely many available iPad for use, the inequality can be modified to solve the problem. Instead of summing until $N$, we can sum until ${H-ck \choose k}$ still makes sense, that is until $\lfloor H/c \rfloor$. This gives us the inequality: \[\sum_{k=0}^{\lfloor H/c \rfloor} {H-ck \choose k} \geq L+1\]
 
-A modification can also be made to solve the problem with dynamic iPad cost. Let $f(x)$ be the function that return the cost of the $x^{th}$ iPad crushed. We define the function $S(x)$ as the sum of the cost of the 1st $x$ iPads crushed, i.e.: \[S(x) = \sum_{i=0}^x f(i)\] The core inequality essential to the combinatoric method will then become: \[\sum_{\substack{k \in \mathbb{Z}_{\geq 0}\\ S(k) < H}} {H-S(k) \choose k} \geq L+1\]
+A modification can also be made to solve the problem with dynamic iPad cost. Let $f(x)$ be the function that return the cost of the $x^{th}$ iPad crushed. We define the function $S(x)$ as the sum of the cost of the 1st $x$ iPads crushed, i.e.: \[S(x) = \sum_{i=0}^x f(i)\] The core inequality essential to the combinatoric method will then become: \[\sum_{k=0}^N {H-S(k) \choose k} \geq L+1\] If there are infinitely many iPads available, the inequality becomes: \[\sum_{\substack{k \in \mathbb{Z}_{\geq 0}\\ S(k) < H}} {H-S(k) \choose k} \geq L+1\]
 
 %===============================================================================
 % End of Chapter 5
@@ -380,42 +380,34 @@ What happens if we have to pay a penalty for each crushed iPad. How would it aff
 
 To tackle this extension, we realise we can re-use our cost table approach, but modify the comparison step slightly to also include the fixed cost. 
 
-Using the table cost approach, we would calculate the cost of the whole DP table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
+Using the table cost approach, we would calculate the cost of the whole cost table during the game initialisation, and subsequently use the value already calculated in the table cell to make the game decisions
 
 In this extension, we consider two scenarios: The number of iPads is finite or infinite
 
-In the case that there is a finite number of iPads, the DP table will be a 2D array, where the number of rows represent the number of iPads, and the number of columns represents the number of levels
+In the case that there is a finite number of iPads, the cost table will be a 2D array, where the number of rows represent the number of remaining iPads, and the number of columns represents the number of remaining strength levels
 
-The pseudo code to calculate the DP table for finite number of iPads is as follows
+The pseudo code to calculate the cost table for finite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for fixed iPad cost (finite number of iPads}
 \begin{algorithmic}[1]
 \REQUIRE N, L, iPadCost
-\STATE $table \leftarrow 2DTable(N, L)$
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $L$}
-		\STATE $table[i][j] = \infty$
-	\ENDFOR
-\ENDFOR
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $1$}
-		\STATE $table[i][j] = j*(1 + iPadCost)$
-	\ENDFOR
+\FOR{$i = 1$ \TO $N$}
+	\STATE $table[i][1] = 1+iPadCost$
 \ENDFOR
 \FOR{$i = 1$ \TO $L$}
-	\STATE $table[1][i] = i + iPadCost$
+	\STATE $table[1][i] = i+iPadCost$
 \ENDFOR
-\FOR{$i = 1$ \TO $N$}
-	\FOR{$j = 1$ \TO $L$}
+\FOR{$i = 2$ \TO $N$}
+	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
-			\STATE $result = max(table[i - 1][k - 1] + iPadCost, table[i][j - k])$
+			\STATE $result = max(table[i - 1][k - 1]+iPadCost, table[i][j - k]) + 1$
 			\IF{$result < best$}
 				\STATE $best \leftarrow result$
 			\ENDIF
 		\ENDFOR
-		\STATE $table[i][j] = best + 1$
+		\STATE $table[i][j] = best$
 	\ENDFOR
 \ENDFOR
 \end{algorithmic}
@@ -423,20 +415,16 @@ The pseudo code to calculate the DP table for finite number of iPads is as follo
 
 We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
 
-In the case that there is an infinite number of iPads, the DP table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the level. The number of cells in the DP table (or in this case the DP row) hence represents the number of levels
+In the case that there is an infinite number of iPads, the cost table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the number of remaining strength levels. The number of cells in the cost table hence represents the number of remaining strength levels
 
-The pseudo code to calculate the DP table for infinite number of iPads is as follows
+The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for fixed iPad cost (infinite number of iPads)}
 \begin{algorithmic}[1]
 \REQUIRE L, iPadCost
 \STATE $table \leftarrow 1DTable(L)$
-\FOR{$i = 0$ \TO $L$}
-	\STATE $table[i] = \infty$
-\ENDFOR
-\STATE $table[0] = 0$
-\STATE $table[1] = iPadCost$
+\STATE $table[1] = iPadCost+1$
 \FOR{$i = 2$ \TO $L$}
 	\STATE $best \leftarrow \infty$
 	\FOR{$k = 1$ \TO $j$}
@@ -445,95 +433,72 @@ The pseudo code to calculate the DP table for infinite number of iPads is as fol
 			\STATE $best \leftarrow result$
 		\ENDIF
 	\ENDFOR
-	\STATE $table[i] = best + 1$
+	\STATE $table[i] = best$
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
 
 \section{iPad with dynamic cost}
 Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
-We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped.
-Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table. approach to pre-calculate the DP cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
-Therefore, to extend the solution for the fixed cost problem to also work in this, we can also store an attribute denoting the number of Ipad crushed. Each cell will then have two attributes, the cost and the number of iPad crushed
 
-We again consider the two scenarios where there are finite and infinite number of iPads
+We can first define a function f, where f(n) denotes the cost of the $n^{th}$ having been crushed.
+Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table approach to pre-calculate the cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
 
-The pseudo code to calculate the DP table for finite number of iPads is as follows
+We again consider the two scenarios where there are finite and infinite number of iPads.
+
+It turns out we can adapt the algorithm used to calculate the cost table for fixed cost iPads to calculate the cost table for dynamic cost iPads. Recall that the value in a particular cell in the cost table table[i][j] represents the cost when there are i remaining iPads and j remaining strength levels. It can be observed then that if a particular game starts with N iPads, the number of iPads that have been crushed at a cell is N-i. So the cost of crushing the next iPad would be f(N-i+1)
+
+Following that intuition, we can come up with the pseudo code to calculate the cost table for finite number of iPads as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for dynamic iPad cost (finite number of iPads)}
 \begin{algorithmic}[1]
 \REQUIRE N, L, f
 \STATE $table \leftarrow 2DTable(N, L)$
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $L$}
-		\STATE $table[i][j].cost = \infty$
-		\STATE $table[i][j].numberOfiPadCrushed = 0$
-	\ENDFOR
-\ENDFOR
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $1$}
-		\STATE $table[i][j].cost = j*(1 + f(j))$
-		\STATE $table[i][j].numberOfiPadCrushed = j$
-	\ENDFOR
+\FOR{$i = 1$ \TO $N$}
+	\STATE $table[i][1] = 1 + f(N-i+1)$
 \ENDFOR
 \FOR{$i = 1$ \TO $L$}
-	\STATE $table[1][i].cost = i + f(1)$
-	\STATE $table[1][i].numberOfiPadCrushed = 1$
+	\STATE $table[1][i] = i + f(N)$
 \ENDFOR
-\FOR{$i = 1$ \TO $N$}
-	\FOR{$j = 1$ \TO $L$}
+\FOR{$i = 2$ \TO $N$}
+	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
-			\STATE $ipadCostWhenCrushed =  f(table[k-1][i-1].numberOfiPadCrushed +1)$
-			\IF{$table[j-k][i].cost >= table[k-1][i-1].cost + ipadCostWhenCrushed$}
-				\STATE $resultCost= table[j-k][i].cost$
-				\STATE resultNumberOfiPadCrushed $= table[j-k][i].numberOfiPadCrushed$
-			\ELSE
-				\STATE $resultCost= table[k-1][i-1].cost + ipadCostWhenCrushed$
-				\STATE $resultNumberOfiPadCrushed = table[k-1][i-1].$numberOfiPadCrushed $+ 1$	
-			\ENDIF
-			\IF{$resultCost < best$}
-				\STATE $best \leftarrow resultCost$
+			\STATE $result = max(table[i - 1][k - 1] + f(N-i+1), table[i][j - k]) + 1$
+			\IF{$result < best$}
+				\STATE $best \leftarrow result$
 			\ENDIF
 		\ENDFOR
-		\STATE $table[i][j].cost = best + 1$
+		\STATE $table[i][j] = best$
 	\ENDFOR
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
 
-The pseudo code to calculate the DP table for infinite number of iPads is as follows
+The limitation to calculating the cost table in this way is that this cost table can only apply for a particular game instance with a fixed starting number of iPads N. This is perhaps less flexible than the cost table that is calculated for fixed cost iPads which can be used for multiple game instances with multiple starting number of iPads.
+
+A possible way to overcome this limitation is possibly to make the cost table 3D, with the extra dimension representing different starting number of iPads.
+
+Next, we consider how to handle the game logic if the we can use infinite number of iPads. In that case, we do not have a starting number of iPads, so we cannot enumerate all the costs during the game initialisation. What we can do is to calculate the cost table on the fly using the current number iPad used 
+
+The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for dynamic iPad cost (infinite number of iPads)}
 \begin{algorithmic}[1]
-\REQUIRE L, f
+\REQUIRE L, f, numIpadUsed
 \STATE $table \leftarrow 1DTable(L)$
-\FOR{$i = 0$ \TO $L$}
-	\STATE $table[i].cost = \infty$
-	\STATE $table[i].numberOfiPadCrushed = 0$
-\ENDFOR
-\STATE $table[0].cost = 0$
-\STATE $table[0].numberOfiPadCrushed  = 0$
-\STATE $table[1] = f(1)$
-\STATE $table[1].numberOfiPadCrushed  = 1$
+\STATE $table[1] = f(numIpadUsed+1)+1$
 \FOR{$i = 2$ \TO $L$}
 	\STATE $best \leftarrow \infty$
-	\FOR{$k = 1$ \TO $i$}
-		\STATE $ipadCostWhenCrushed =  f(table[k-1].numberOfiPadCrushed +1)$
-		\IF{$table[i-k].cost >= table[k-1].cost + ipadCostWhenCrushed$}
-			\STATE $resultCost= table[i-k].cost$
-			\STATE resultNumberOfiPadCrushed $= table[i-k].numberOfiPadCrushed$
-		\ELSE
-			\STATE $resultCost= table[k-1].cost + ipadCostWhenCrushed$
-			\STATE $resultNumberOfiPadCrushed = table[k-1].$numberOfiPadCrushed $+ 1$	
-		\ENDIF
-		\IF{$resultCost < best$}
-			\STATE $best \leftarrow resultCost$
+	\FOR{$k = 1$ \TO $j$}
+		\STATE $result = max(table[k - 1] + f(numIpadUsed+1), table[j - k])$
+		\IF{$result < best$}
+			\STATE $best \leftarrow result$
 		\ENDIF
 	\ENDFOR
-	\STATE $table[i].cost = best + 1$
+	\STATE $table[i] = best$
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
