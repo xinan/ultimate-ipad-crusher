@@ -306,74 +306,6 @@ There are some minor disadvantages though, and they include the conditions that 
 %===============================================================================
 % Start of Chapter 5
 %===============================================================================
-\chapter{The online combinatorics approach}
-Besides the Dynamic Programming approach to this iPad Crushing problem, we also found an interesting alternative approach online using Combinatorics to calculate how many times we need to crush the iPad in the worst case \cite{randomblogpost}. The original author describes it as a solution to the classic Egg Dropping Puzzle. Here, we formulate the solution in terms of our iPad Crushing problem and make some corrections.
-
-\section{Theory}
-Before we begin discussing the solution, we need to reiterate our definition of a strategy to solve the iPad Crushing problem. A strategy is a binary decision tree, with each node representing a level of strength that we will use to try crushing the iPad. Following the left branch represents the scenario that the iPad survives the crush, while the right branch represents the scenario when the iPad does not survive the crush. A leaf of the tree represents the minimum level of strength to crush the iPad that we have found. Figure \ref{fig:comb-original} illustrates a decision tree when there are 3 iPads and 10 strength levels.
-
-\begin{figure}
-	\centering
-	\begin{subfigure}{1.0\textwidth}
-		\includegraphics[width=\textwidth]{comb-original}
-		\caption{Decision tree of the optimal strategy with 3 iPads and 10 strength levels}
-		\label{fig:comb-original}
-	\end{subfigure}
-	\begin{subfigure}{1.0\textwidth}
-		\includegraphics[width=\textwidth]{comb-binary-sequence}
-		\caption{How the decision tree is converted to binary sequences}
-		\label{fig:comb-binary-sequence}
-	\end{subfigure}
-	\caption{Example of a decision tree and its conversion to binary sequences}
-\end{figure}
-
-The number of crushings we need to do to determine the minimum strength level to crush the iPad is the length of a path from the root node to a leaf. Hence, the number of crushings in the worst case is just the height of the decision tree. The goal of the game is to find a decision tree with minimum height.
-
-Similar to the dynamic programming approach, given the number of levels $L$ and the number of iPads $N$, we will need to find the minimum height $H$ of a decision tree to solve this iPad Crushing Problem. However, we will do this by formulating a slightly different problem. This is quite similar to the proof that all comparison-based sorting algorithms need to make at least $\log n$ comparisons in the worst case. An iPad Crushing problem with $N$ iPads and $L$ strength levels has a decision tree of height $H$. We will find the maximum $L$, given $N$ and $H$.
-
-We will count the number of possible leaves in the decision tree of height $H$. We note that every path from the root node to a leaf can branch to the right (the iPad does not survive) at most $N$ times. Hence each leaf can be represented by a binary sequence of 1 (left) and 0 (right), with at most $N$ zeros (rights). Since the height of our decision tree is $H$, the length of each binary sequence is at most $H$. For a binary sequence with length less than $H$, we can append it with ones until the length becomes $H$. Figure \ref{fig:comb-binary-sequence} illustrates this process. Note that this is a one-to-one transformation because there are no 2 leaves in the same tree such that the first leaf's binary sequence starts with the same digits as the second leaf's binary sequence (e.g. if there is a leaf 010, there cannot be any leaf that starts with 010, hence there will not be any duplication when we append 010 with 1's). Due to this injectivity, the number of leaves possible is at most the number of binary sequences of length $H$ with at most $N$ zeros. There are ${H \choose k}$ binary sequences of length $H$ with $k$ zeros. Therefore, the maximum number of leaves in a decision tree of height $H$ is $\sum_{k=0}^{N} {H \choose k}$.
-
-Obviously, the number of  leaves is exactly $L+1$, as there are $L+1$ possible values for the minimum strength level to crush the iPad. Thus, we arrive at the inequality: \[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
-
-Going back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
-
-\section{Algorithm}
-Based on the theory discussed in the previous section, together with the fact that $H \geq \log L$ since the decision tree is a binary tree, we formulate the following algorithm to calculate the cost in the worst case of the iPad Crushing problem.
-
-\begin{algorithm}
-        \caption{Calculate the cost of the iPad Crushing problem with N iPads, L strength levels}
-        \begin{algorithmic}[1]
-            \REQUIRE N, L
-	\STATE $H \leftarrow \lceil \log L\rceil$
-	\STATE $sum \leftarrow \sum_{k=0}^{N} {H \choose k}$
-	\WHILE {$sum < L+1$}
-		\STATE $H \leftarrow H+1$
-		\STATE $sum \leftarrow \sum_{k=0}^{N} {H \choose k}$
-	\ENDWHILE
-	\RETURN $H$
-        \end{algorithmic}
-\end{algorithm}
-
-\section{Discussion}
-We can use the algorithm outlined in the previous section to fill in our $N \times L$ cost table. The running time of this algorithm is dependent on the size of the answer it gets, i.e. $H$, as well as on how fast combination can be calculated. If we assume that ${H \choose k}$ can be computed in $O(H)$ time, then the time to compute one entry in the cost table is $O(NH^2)$. For the dynamic programming approach, the time to compute one entry in the cost table is $O(L)$. We do not have the necessary mathematical tools to rigorously compare those 2 time complexities; however, according to our test, filling the cost table with this approach takes roughly the same time as the dynamic programming approach.
-
-Nevertheless, the advantage of this approach is that it can compute the cost of the iPad Crushing problem, given $N$ and $L$, very fast. That is because it does not need to calculate the cost of any smaller problems like the dynamic programming approach.  As an example, our implementation of the combinatoric calculates the cost in the worst case with 1 million levels, 10 iPads instantly, while the dynamic programming approach takes so long that we terminate it before it returns a result. Hence, we do not have to pre-calculate the cost table like the dynamic programming approach. When the player decides to crush the iPad at level $l$, we can just calculate and compare the cost if the iPad is crushed and if it is not crushed and choose the scenario with the higher cost directly.
-
-At first, we thought that the downside of this approach would be its inflexibility, i.e. it is harder to tweak to solve modified versions of the iPad Crushing problem. However, we actually manage to tweak it to solve the modified versions as well.
-
-To solve the problem when the cost of an iPad is a constant $c$, we need replace each branch to the right with $(c+1)$ consecutive branchings to the right. Hence the total number of possible paths will be the number of binary sequences of length $H$ such that zeros can only appear in group of $(c+1)$, and there are at most $N$ groups of $(c+1)$ zeros. To solve this, we need to consider a group of $(c+1)$ zeros as one units (one 0), which decreases the length of the sequence to $H - c \times number\_of\_groups$. This gives us a more complicated inequality, but can still be substituted into the proposed algorithm to solve the question: \[\sum_{k=0}^{N} {H-ck \choose k} \geq L+1\]
-
-Even when there are inifinitely many available iPad for use, the inequality can be modified to solve the problem. Instead of summing until $N$, we can sum until ${H-ck \choose k}$ still makes sense, that is until $\lfloor H/c \rfloor$. This gives us the inequality: \[\sum_{k=0}^{\lfloor H/c \rfloor} {H-ck \choose k} \geq L+1\]
-
-A modification can also be made to solve the problem with dynamic iPad cost. Let $f(x)$ be the function that return the cost of the $x^{th}$ iPad crushed. We define the function $S(x)$ as the sum of the cost of the 1st $x$ iPads crushed, i.e.: \[S(x) = \sum_{i=0}^x f(i)\] The core inequality essential to the combinatoric method will then become: \[\sum_{k=0}^N {H-S(k) \choose k} \geq L+1\] If there are infinitely many iPads available, the inequality becomes: \[\sum_{\substack{k \in \mathbb{Z}_{\geq 0}\\ S(k) < H}} {H-S(k) \choose k} \geq L+1\] Using this inequality and the algorithm outlined in the previous section, we can compute the cost in the worst case scenario on the fly. Hence we can decide, given a level l that the player wants to crush the iPad at and the number of iPads that have been crushed, whether making the iPad survive or crushed will be the worse scenario. This is an advantage compared to the dynamic programming approach, which cannot compute all the possible game states before hand (because there are infinitely many game states) and its running time is slow when computing on the fly.
-
-%===============================================================================
-% End of Chapter 5
-%===============================================================================
-
-%===============================================================================
-% Start of Chapter 6
-%===============================================================================
 \chapter{Interesting extensions}
 \section{iPad with fixed cost}
 
@@ -485,7 +417,10 @@ The pseudo code to calculate the cost table for infinite number of iPads is as f
 \end{algorithm}
 
 \section{iPad with dynamic cost}
+
 Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
+
+We focus how the game logic would need to be adapted.
 
 We can first define a function f, where f(n) denotes the cost of the $n^{th}$ having been crushed.
 Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table approach to pre-calculate the cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
@@ -526,7 +461,78 @@ The limitation to calculating the cost table in this way is that this cost table
 
 A possible way to overcome this limitation is possibly to make the cost table 3D, with the extra dimension representing different starting number of iPads.
 
-For infinite number of iPads, however, the cost table method break down. As the starting number of iPads is indeterminate, it is impossible to precompute the cost table for all possible game states.
+For infinite number of iPads, however, the cost table method breaks down. As the starting number of iPads is indeterminate, it is impossible to precompute the cost table for all possible game states.
+
+
+%===============================================================================
+% End of Chapter 5
+%===============================================================================
+
+%===============================================================================
+% Start of Chapter 6
+%===============================================================================
+
+
+\chapter{The online combinatorics approach}
+Besides the Dynamic Programming approach to this iPad Crushing problem, we also found an interesting alternative approach online using Combinatorics to calculate how many times we need to crush the iPad in the worst case \cite{randomblogpost}. The original author describes it as a solution to the classic Egg Dropping Puzzle. Here, we formulate the solution in terms of our iPad Crushing problem and make some corrections.
+
+\section{Theory}
+Before we begin discussing the solution, we need to reiterate our definition of a strategy to solve the iPad Crushing problem. A strategy is a binary decision tree, with each node representing a level of strength that we will use to try crushing the iPad. Following the left branch represents the scenario that the iPad survives the crush, while the right branch represents the scenario when the iPad does not survive the crush. A leaf of the tree represents the minimum level of strength to crush the iPad that we have found. Figure \ref{fig:comb-original} illustrates a decision tree when there are 3 iPads and 10 strength levels.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{1.0\textwidth}
+		\includegraphics[width=\textwidth]{comb-original}
+		\caption{Decision tree of the optimal strategy with 3 iPads and 10 strength levels}
+		\label{fig:comb-original}
+	\end{subfigure}
+	\begin{subfigure}{1.0\textwidth}
+		\includegraphics[width=\textwidth]{comb-binary-sequence}
+		\caption{How the decision tree is converted to binary sequences}
+		\label{fig:comb-binary-sequence}
+	\end{subfigure}
+	\caption{Example of a decision tree and its conversion to binary sequences}
+\end{figure}
+
+The number of crushings we need to do to determine the minimum strength level to crush the iPad is the length of a path from the root node to a leaf. Hence, the number of crushings in the worst case is just the height of the decision tree. The goal of the game is to find a decision tree with minimum height.
+
+Similar to the dynamic programming approach, given the number of levels $L$ and the number of iPads $N$, we will need to find the minimum height $H$ of a decision tree to solve this iPad Crushing Problem. However, we will do this by formulating a slightly different problem. This is quite similar to the proof that all comparison-based sorting algorithms need to make at least $\log n$ comparisons in the worst case. An iPad Crushing problem with $N$ iPads and $L$ strength levels has a decision tree of height $H$. We will find the maximum $L$, given $N$ and $H$.
+
+We will count the number of possible leaves in the decision tree of height $H$. We note that every path from the root node to a leaf can branch to the right (the iPad does not survive) at most $N$ times. Hence each leaf can be represented by a binary sequence of 1 (left) and 0 (right), with at most $N$ zeros (rights). Since the height of our decision tree is $H$, the length of each binary sequence is at most $H$. For a binary sequence with length less than $H$, we can append it with ones until the length becomes $H$. Figure \ref{fig:comb-binary-sequence} illustrates this process. Note that this is a one-to-one transformation because there are no 2 leaves in the same tree such that the first leaf's binary sequence starts with the same digits as the second leaf's binary sequence (e.g. if there is a leaf 010, there cannot be any leaf that starts with 010, hence there will not be any duplication when we append 010 with 1's). Due to this injectivity, the number of leaves possible is at most the number of binary sequences of length $H$ with at most $N$ zeros. There are ${H \choose k}$ binary sequences of length $H$ with $k$ zeros. Therefore, the maximum number of leaves in a decision tree of height $H$ is $\sum_{k=0}^{N} {H \choose k}$.
+
+Obviously, the number of  leaves is exactly $L+1$, as there are $L+1$ possible values for the minimum strength level to crush the iPad. Thus, we arrive at the inequality: \[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
+
+Going back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
+
+\section{Algorithm}
+Based on the theory discussed in the previous section, together with the fact that $H \geq \log L$ since the decision tree is a binary tree, we formulate the following algorithm to calculate the cost in the worst case of the iPad Crushing problem.
+
+\begin{algorithm}
+        \caption{Calculate the cost of the iPad Crushing problem with N iPads, L strength levels}
+        \begin{algorithmic}[1]
+            \REQUIRE N, L
+	\STATE $H \leftarrow \lceil \log L\rceil$
+	\STATE $sum \leftarrow \sum_{k=0}^{N} {H \choose k}$
+	\WHILE {$sum < L+1$}
+		\STATE $H \leftarrow H+1$
+		\STATE $sum \leftarrow \sum_{k=0}^{N} {H \choose k}$
+	\ENDWHILE
+	\RETURN $H$
+        \end{algorithmic}
+\end{algorithm}
+
+\section{Discussion}
+We can use the algorithm outlined in the previous section to fill in our $N \times L$ cost table. The running time of this algorithm is dependent on the size of the answer it gets, i.e. $H$, as well as on how fast combination can be calculated. If we assume that ${H \choose k}$ can be computed in $O(H)$ time, then the time to compute one entry in the cost table is $O(NH^2)$. For the dynamic programming approach, the time to compute one entry in the cost table is $O(L)$. We do not have the necessary mathematical tools to rigorously compare those 2 time complexities; however, according to our test, filling the cost table with this approach takes roughly the same time as the dynamic programming approach.
+
+Nevertheless, the advantage of this approach is that it can compute the cost of the iPad Crushing problem, given $N$ and $L$, very fast. That is because it does not need to calculate the cost of any smaller problems like the dynamic programming approach.  As an example, our implementation of the combinatoric calculates the cost in the worst case with 1 million levels, 10 iPads instantly, while the dynamic programming approach takes so long that we terminate it before it returns a result. Hence, we do not have to pre-calculate the cost table like the dynamic programming approach. When the player decides to crush the iPad at level $l$, we can just calculate and compare the cost if the iPad is crushed and if it is not crushed and choose the scenario with the higher cost directly.
+
+At first, we thought that the downside of this approach would be its inflexibility, i.e. it is harder to tweak to solve modified versions of the iPad Crushing problem. However, we actually manage to tweak it to solve the modified versions as well.
+
+To solve the problem when the cost of an iPad is a constant $c$, we need replace each branch to the right with $(c+1)$ consecutive branchings to the right. Hence the total number of possible paths will be the number of binary sequences of length $H$ such that zeros can only appear in group of $(c+1)$, and there are at most $N$ groups of $(c+1)$ zeros. To solve this, we need to consider a group of $(c+1)$ zeros as one units (one 0), which decreases the length of the sequence to $H - c \times number\_of\_groups$. This gives us a more complicated inequality, but can still be substituted into the proposed algorithm to solve the question: \[\sum_{k=0}^{N} {H-ck \choose k} \geq L+1\]
+
+Even when there are inifinitely many available iPad for use, the inequality can be modified to solve the problem. Instead of summing until $N$, we can sum until ${H-ck \choose k}$ still makes sense, that is until $\lfloor H/c \rfloor$. This gives us the inequality: \[\sum_{k=0}^{\lfloor H/c \rfloor} {H-ck \choose k} \geq L+1\]
+
+A modification can also be made to solve the problem with dynamic iPad cost. Let $f(x)$ be the function that return the cost of the $x^{th}$ iPad crushed. We define the function $S(x)$ as the sum of the cost of the 1st $x$ iPads crushed, i.e.: \[S(x) = \sum_{i=0}^x f(i)\] The core inequality essential to the combinatoric method will then become: \[\sum_{k=0}^N {H-S(k) \choose k} \geq L+1\] If there are infinitely many iPads available, the inequality becomes: \[\sum_{\substack{k \in \mathbb{Z}_{\geq 0}\\ S(k) < H}} {H-S(k) \choose k} \geq L+1\] Using this inequality and the algorithm outlined in the previous section, we can compute the cost in the worst case scenario on the fly. Hence we can decide, given a level l that the player wants to crush the iPad at and the number of iPads that have been crushed, whether making the iPad survive or crushed will be the worse scenario. This is an advantage compared to the dynamic programming approach, which cannot compute all the possible game states before hand (because there are infinitely many game states) and its running time is slow when computing on the fly.
 
 %===============================================================================
 % End of Chapter 6
