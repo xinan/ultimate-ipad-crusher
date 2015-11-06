@@ -139,11 +139,12 @@ The egg dropping puzzle is a well known one and an example most often used to il
 % Start of Chapter 2
 %===============================================================================
 \chapter{Existing work}
-I put random chapter titles here. Feel free to change. And this is how you cite a source \cite{randomblogpost}.
+Since this is a classic problem, although there is no research paper on it, there are quite a number of blog posts about it online.
 
-\section{What does the fox say?}
-\subsection{Introduction}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere, tincidunt mauris vitae, bibendum sapien. Suspendisse a eros pretium, pretium libero eget, ornare ante. Donec efficitur gravida pellentesque. Curabitur sit amet pulvinar tortor. In eu risus commodo, elementum tellus ac, commodo mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer hendrerit arcu sem, convallis dignissim nisi faucibus at. Praesent ut rutrum libero, sollicitudin blandit dui. Donec mi nisi, cursus quis accumsan et, molestie ut nisi. Sed egestas enim in dolor tincidunt dictum. Sed eu semper sem. Sed elementum augue ac pretium eleifend. Ut massa tortor, rhoncus a mi ac, congue ullamcorper eros. Maecenas imperdiet orci quis dui rhoncus, id rhoncus mi condimentum. Nunc blandit egestas leo, sit amet porttitor mi malesuada nec. Pellentesque id bibendum purus, a porta risus. \\\\
+\section{What did the folks say?}
+On the Dynamic Programming Wikipedia page \cite{dpwiki}, there is a small section talking about the original egg dropping puzzle. It provides a way to solve the original egg dropping puzzle using dynamic programming. And in fact, this is the solution that most of the web posts about this problem will give. We will make use of dynamic programming in one of our approaches too. \\\\
+In one of the web posts, we found another very interesting way of solving the original egg dropping problem, by mapping the problem into another combinatorics problem and do some counting. We will discuss about this in one of the later chapters. \\\\
+Besides this, Prof. Sim has also shared with us his approach of designing the game logic, which is different from the approach that we have in mind. We will discuss about how we extend our approach with insights from Prof. Sim's approach. 
 
 %===============================================================================
 % End of Chapter 2
@@ -162,7 +163,7 @@ In a game level with $N$ number of iPads and $L$ strength levels, the player cho
 \item if the iPad breaks, the game state becomes $N - 1$ number of iPads and $x - 1$ strength levels.
 \item if the iPad does not break, the game state becomes $N$ number of iPads and $L - x$ strength levels.
 \end{itemize}
-We can compute the cost of $(N, L)$ by recursively computing all possible sub-problems. The final cost of $(N, L)$ would be $(1 + \text{cost of the minimum-cost sub-problem})$. Here are some base cases:
+We can compute the cost of $(N, L)$ by recursively computing all possible sub-problems, then pick the sub-problem with the minimum cost and add 1 to it. The final cost of $(N, L)$ would be $(1 + \text{cost of the minimum-cost sub-problem})$. Here are some base cases:
 \begin{itemize}
 \item if $N = 1$, the cost would be $L$ because the only way to find the correct strength is to try one by one from the lowest strength level to the highest strength level. In the worst-case, the iPad only breaks at the highest strength level, so it will need $L$ number of crushing.
 \item if $L = 1$, the cost will be 1 since there is only one strength level to be crushed at.
@@ -224,7 +225,7 @@ Instead of computing each cell individually to fill the table, we initialize all
 \FOR{$i = 2$ \TO $N$}
 	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
-		\FOR{$k = 1$ \TO $j$}
+		\FOR{$k = 2$ \TO $j$}
 			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])$
 			\IF{$result < best$}
 				\STATE $best \leftarrow result$
@@ -556,6 +557,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 %===============================================================================
 \renewcommand{\bibname}{References}
 \begin{thebibliography}{1} \addcontentsline{toc}{chapter}{References}
+	\bibitem{dpwiki} Dynamic Programming. https://en.wikipedia.org/wiki/Dynamic\_programming
 	\bibitem{randomblogpost} Egg Drop Puzzle. http://michaelbrundage.com/note/2014/04/26/egg-drop/
 \end{thebibliography}
 
