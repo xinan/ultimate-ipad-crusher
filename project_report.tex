@@ -454,10 +454,10 @@ Following that intuition, we can come up with the pseudo code to calculate the c
 \REQUIRE N, L, f
 \STATE $table \leftarrow 2DTable(N, L)$
 \FOR{$i = 1$ \TO $N$}
-	\STATE $table[i][1] = 1 + f(N-i)$
+	\STATE $table[i][1] = 1 + f(N-i+1)$
 \ENDFOR
 \FOR{$i = 1$ \TO $L$}
-	\STATE $table[1][i] = i + f(N-1)$
+	\STATE $table[1][i] = i + f(N)$
 \ENDFOR
 \FOR{$i = 2$ \TO $N$}
 	\FOR{$j = 2$ \TO $L$}
