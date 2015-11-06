@@ -239,9 +239,9 @@ Instead of computing each cell individually to fill the table, we initialize all
 Using the dynamic programming algorithm, we can reduce the running time of the algorithm to $O(NL^2)$. This is because for each of the $N \times L$ entries, we only need at most $L$ comparisons to get the result. \\\\
 This allows us to compute the cost of up to hundreds of strength levels and tens of iPads, whereas the brute-force algorithm is only capable of computing problems up to around 20 strength levels and several iPads.
 \section{Pros and Cons}
-The good thing about this cost table approach is that it is simple and fast. Since it is an offline approach, we can pre-compute the cost table and store it in the game, so that during the game, we will be able to make decisions quickly by simply looking up the table and make some comparisons. \\\\
-This approach also makes it easy for extensions like adding a cost for breaking an iPad, either fixed cost or dynamic cost, which we will talk about in Chapter 6. \\\\
-One disadvantage about this approach is that since we do not store the best strategies, there is no easy way for us to provide hints for the player. The only way we could provide hints will be to try every possible scenarios at that stage to compare and find the optimal one. We will discuss about an extension of this approach to support hints easily.
+The good thing about this cost table approach is that it is simple and fast. Since it is an offline approach, we can pre-compute the cost table and store it in the game, so that during the game, we will be able to make decisions quickly by simply looking up the table and making some comparisons. \\\\
+This approach also makes it easy for extensions, like adding either fixed cost or dynamic cost for breaking an iPad, which we will talk about in Chapter 6. \\\\
+One disadvantage about this approach is that since we do not store the best strategies, there is no easy way for us to provide hints for the player. The only way we could provide hints will be to try every possible scenarios at that stage to compare and find the optimal one. We will discuss about an extension of this approach to support hints easily in the next chapter.
 
 %===============================================================================
 % End of Chapter 3
@@ -335,7 +335,7 @@ We will count the number of possible leaves in the decision tree of height $H$. 
 
 Obviously, the number of  leaves is exactly $L+1$, as there are $L+1$ possible values for the minimum strength level to crush the iPad. Thus, we arrive at the inequality: \[\sum_{k=0}^{N} {H \choose k} \geq L+1\]
 
-So back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
+Going back to our original problem, the decision tree for this iPad Crushing problem with $N$ iPads and $L$ strength levels will have the minimum height $H$ such that the above inequality holds.
 
 \section{Algorithm}
 Based on the theory discussed in the previous section, together with the fact that $H \geq \log L$ since the decision tree is a binary tree, we formulate the following algorithm to calculate the cost in the worst case of the iPad Crushing problem.
