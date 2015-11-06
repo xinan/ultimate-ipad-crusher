@@ -474,41 +474,29 @@ Following that intuition, we can come up with the pseudo code to calculate the c
 \end{algorithmic}
 \end{algorithm}
 
-The only limitation to calculating the cost table in this way is that this cost table can only apply for a particular game instance with a fixed starting number of iPads N. This is perhaps less flexible than the cost table that is calculated for fixed cost iPads which can be used for multiple game instances with multiple starting number of iPads.
+The limitation to calculating the cost table in this way is that this cost table can only apply for a particular game instance with a fixed starting number of iPads N. This is perhaps less flexible than the cost table that is calculated for fixed cost iPads which can be used for multiple game instances with multiple starting number of iPads.
 
 A possible way to overcome this limitation is possibly to make the cost table 3D, with the extra dimension representing different starting number of iPads.
+
+Next, we consider how to handle the game logic if the we can use infinite number of iPads. In that case, we do not have a starting number of iPads, so we cannot enumerate all the costs during the game initialisation. What we can do is to calculate the cost table on the fly using the current number iPad used 
 
 The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for dynamic iPad cost (infinite number of iPads)}
 \begin{algorithmic}[1]
-\REQUIRE L, f
+\REQUIRE L, f, numIpadUsed
 \STATE $table \leftarrow 1DTable(L)$
-\FOR{$i = 0$ \TO $L$}
-	\STATE $table[i].cost = \infty$
-	\STATE $table[i].numberOfiPadCrushed = 0$
-\ENDFOR
-\STATE $table[0].cost = 0$
-\STATE $table[0].numberOfiPadCrushed  = 0$
-\STATE $table[1] = f(1)$
-\STATE $table[1].numberOfiPadCrushed  = 1$
+\STATE $table[1] = f(numIpadUsed+1)+1$
 \FOR{$i = 2$ \TO $L$}
 	\STATE $best \leftarrow \infty$
-	\FOR{$k = 1$ \TO $i$}
-		\STATE $ipadCostWhenCrushed =  f(table[k-1].numberOfiPadCrushed +1)$
-		\IF{$table[i-k].cost >= table[k-1].cost + ipadCostWhenCrushed$}
-			\STATE $resultCost= table[i-k].cost$
-			\STATE resultNumberOfiPadCrushed $= table[i-k].numberOfiPadCrushed$
-		\ELSE
-			\STATE $resultCost= table[k-1].cost + ipadCostWhenCrushed$
-			\STATE $resultNumberOfiPadCrushed = table[k-1].$numberOfiPadCrushed $+ 1$	
-		\ENDIF
-		\IF{$resultCost < best$}
-			\STATE $best \leftarrow resultCost$
+	\FOR{$k = 1$ \TO $j$}
+		\STATE $result = max(table[k - 1] + f(numIpadUsed+1), table[j - k])$
+		\IF{$result < best$}
+			\STATE $best \leftarrow result$
 		\ENDIF
 	\ENDFOR
-	\STATE $table[i].cost = best + 1$
+	\STATE $table[i] = best$
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
