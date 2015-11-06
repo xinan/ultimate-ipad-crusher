@@ -239,6 +239,9 @@ Instead of computing each cell individually and fill in the table, we initialize
 Using the dynamic programming algorithm, we can reduce the running time of the algorithm to $O(NL^2)$. This is because for each of the $N \times L$ entries, we only need at most $L$ comparisons to get the result. \\\\
 It is capable of computing the cost with hundreds of strength levels and tens of iPads, whereas the brute-force algorithm is only capable of computing problems with around 20 strength levels and several iPads.
 \section{Pros and Cons}
+The good thing about this cost table approach is that it is simple and fast. Since it is an offline approach, we can pre-compute the cost table and store it in the game, so that during the game, we will be able to make decisions quickly by simply looking up the table and make some comparisons. \\\\
+This approach also makes it easy for extensions like adding a cost for breaking an iPad, either fixed cost or dynamic cost, which we will talk about in Chapter 6. \\\\
+One disadvantage about this approach is that since we do not store the best strategies, there is no easy way for us to provide hints for the player. The only way we could provide hints will be to try every possible scenarios at that stage to compare and find the optimal one. We will discuss about an extension of this approach to support hints easily.
 
 %===============================================================================
 % End of Chapter 3
