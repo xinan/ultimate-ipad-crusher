@@ -439,12 +439,13 @@ The pseudo code to calculate the cost table for infinite number of iPads is as f
 
 \section{iPad with dynamic cost}
 Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
-We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped.
+
+We can first define a function f, where f(n) denotes the cost of the $n^{th}$ having been crushed.
 Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table approach to pre-calculate the cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
 
 We again consider the two scenarios where there are finite and infinite number of iPads.
 
-It turns out we can adapt the algorithm used to calculate the cost table for fixed cost iPads to calculate the cost table for dynamic cost iPads. Recall that the value in a particular cell in the cost table table[i][j] represents the cost when there are i remaining iPads and j remaining strength levels. It can be observed then that if a particular game starts with N iPads, the number of iPads that have been crushed at a cell is N-i.
+It turns out we can adapt the algorithm used to calculate the cost table for fixed cost iPads to calculate the cost table for dynamic cost iPads. Recall that the value in a particular cell in the cost table table[i][j] represents the cost when there are i remaining iPads and j remaining strength levels. It can be observed then that if a particular game starts with N iPads, the number of iPads that have been crushed at a cell is N-i. So the cost of crushing the next iPad would be f(N-i+1)
 
 Following that intuition, we can come up with the pseudo code to calculate the cost table for finite number of iPads as follows
 
