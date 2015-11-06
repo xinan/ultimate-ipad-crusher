@@ -441,54 +441,42 @@ The pseudo code to calculate the cost table for infinite number of iPads is as f
 Let's make the problem even more complex. How do we tackle the problem if the cost of the iPad is not fixed, but changing depending on how many iPad has been crushed. 
 We can first define a function f, where f(n) denotes the cost of the $n^{th}$ being dropped.
 Intuitively, we can see that this problem is very close to the fixed iPad cost problem. We can again use the cost table approach to pre-calculate the cost table. The difference lies in the fact that we also now need to consider how many iPads have been crushed before.
-Therefore, to extend the solution for the fixed cost problem to also work in this, we can also store an attribute denoting the number of Ipad crushed. Each cell will then have two attributes, the cost and the number of iPad crushed
 
-We again consider the two scenarios where there are finite and infinite number of iPads
+We again consider the two scenarios where there are finite and infinite number of iPads.
 
-The pseudo code to calculate the cost table for finite number of iPads is as follows
+It turns out we can adapt the algorithm used to calculate the cost table for fixed cost iPads to calculate the cost table for dynamic cost iPads. Recall that the value in a particular cell in the cost table table[i][j] represents the cost when there are i remaining iPads and j remaining levels. It can be observed then that if a particular game starts with N iPads, the number of iPads that have been crushed at a cell is N-i.
+
+Following that intuition, we can come up with the pseudo code to calculate the cost table for finite number of iPads as follows
 
 \begin{algorithm}[H]
 \caption{Calculate the cost table for dynamic iPad cost (finite number of iPads)}
 \begin{algorithmic}[1]
 \REQUIRE N, L, f
 \STATE $table \leftarrow 2DTable(N, L)$
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $L$}
-		\STATE $table[i][j].cost = \infty$
-		\STATE $table[i][j].numberOfiPadCrushed = 0$
-	\ENDFOR
-\ENDFOR
-\FOR{$i = 0$ \TO $N$}
-	\FOR{$j = 0$ \TO $1$}
-		\STATE $table[i][j].cost = j*(1 + f(j))$
-		\STATE $table[i][j].numberOfiPadCrushed = j$
-	\ENDFOR
+\FOR{$i = 1$ \TO $N$}
+	\STATE $table[i][1] = 1 + f(N-i)$
 \ENDFOR
 \FOR{$i = 1$ \TO $L$}
-	\STATE $table[1][i].cost = i + f(1)$
-	\STATE $table[1][i].numberOfiPadCrushed = 1$
+	\STATE $table[1][i] = i + f(N-1)$
 \ENDFOR
-\FOR{$i = 1$ \TO $N$}
-	\FOR{$j = 1$ \TO $L$}
+\FOR{$i = 2$ \TO $N$}
+	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
-			\STATE $ipadCostWhenCrushed =  f(table[k-1][i-1].numberOfiPadCrushed +1)$
-			\IF{$table[j-k][i].cost >= table[k-1][i-1].cost + ipadCostWhenCrushed$}
-				\STATE $resultCost= table[j-k][i].cost$
-				\STATE resultNumberOfiPadCrushed $= table[j-k][i].numberOfiPadCrushed$
-			\ELSE
-				\STATE $resultCost= table[k-1][i-1].cost + ipadCostWhenCrushed$
-				\STATE $resultNumberOfiPadCrushed = table[k-1][i-1].$numberOfiPadCrushed $+ 1$	
-			\ENDIF
-			\IF{$resultCost < best$}
-				\STATE $best \leftarrow resultCost$
+			\STATE $result = max(table[i - 1][k - 1] + f(N-i+1), table[i][j - k]) + 1$
+			\IF{$result < best$}
+				\STATE $best \leftarrow result$
 			\ENDIF
 		\ENDFOR
-		\STATE $table[i][j].cost = best + 1$
+		\STATE $table[i][j] = best$
 	\ENDFOR
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
+
+The only limitation to calculating the cost table in this way is that this cost table can only apply for a particular game instance with a fixed starting number of iPads N. This is perhaps less flexible than the cost table that is calculated for fixed cost iPads which can be used for multiple game instances with multiple starting number of iPads.
+
+A possible way to overcome this limitation is possibly to make the cost table 3D, with the extra dimension representing different starting number of iPads.
 
 The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
