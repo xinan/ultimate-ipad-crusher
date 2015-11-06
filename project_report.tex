@@ -221,8 +221,8 @@ Instead of computing each cell individually and fill in the table, we initialize
 \FOR{$i = 1$ \TO $L$}
 	\STATE $table[1][i] = i$
 \ENDFOR
-\FOR{$i = 1$ \TO $N$}
-	\FOR{$j = 1$ \TO $L$}
+\FOR{$i = 2$ \TO $N$}
+	\FOR{$j = 2$ \TO $L$}
 		\STATE $best \leftarrow \infty$
 		\FOR{$k = 1$ \TO $j$}
 			\STATE $result = max(table[i - 1][k - 1], table[i][j - k])$
