@@ -1,3 +1,5 @@
+import pygraphviz as pgv
+
 def getHeight(node):
     return node[1]
 
@@ -18,6 +20,21 @@ def getLevel(node):
 
 def isLeaf(node):
     return getHeight(node) == 0
+
+def drawTree(root):
+    G = pgv.AGraph(directed=False, strict=True)
+    def helper(node):
+        G.add_node(node, label=getLevel(node))
+        if not(isLeaf(node)):
+            crushed = getCrushed(node)
+            notCrushed = getNotCrushed(node)
+            helper(notCrushed)
+            helper(crushed)
+            G.add_edge(node, notCrushed, label='1')
+            G.add_edge(node, crushed, label='0')
+    helper(root)
+    G.layout(prog='dot')
+    G.draw('file.png')
 
 def solve(N, L):
     return solveHelper(0, N, L)
@@ -43,3 +60,4 @@ def solveHelper(offset, N, L):
         return min([solveSmall(level) for level in range(offset+1, offset+L+1)],
                    key=getHeight)
         
+drawTree(solve(3, 10))
