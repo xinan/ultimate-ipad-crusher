@@ -83,8 +83,8 @@ Prof. Sim Khe Chai
 \thispagestyle{plain}
 \onehalfspacing
 \addcontentsline{toc}{chapter}{Abstract}
-In this project, we were asked to design the game logic for ``iPad Crusher'', an iOS game that Prof. Sim is developing as an adaptation to the Egg Dropping Problem. Given a certain number of iPads and strength levels, the player is asked to find the lowest strength level that would break an iPad. Similar to the Egg Dropping Puzzle, the goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. \\\\
-In this report we present three approaches in designing the game logic, the first is the original solution that we came up with, which is to generate the cost table and make the game decisions based on the costs. The second approach is one that Prof. Sim briefly mentioned, which decides based on the optimum level stored in a table. The third approach is one that we found online, the combinatorics approach. We would discuss the advantages and disadvantages of each of the three approaches, as well as different implementations of them. Lastly we would discuss some interesting extension of the problem such as adding an extra cost for breaking an iPad, and a variant of it with unlimited number of iPads, etc. In the end we conclude that for the original game logic, the cost table approach would be the better choice, whereas for some extensions, the decision tree approach would be better.
+In this project, we were asked to design the game logic for ``iPad Crusher'', an iOS game that Prof. Sim is developing as an adaptation to the Egg Dropping Problem. Given a certain number of iPads and strength levels, the player is asked to find the lowest strength level that will break an iPad. Similar to the Egg Dropping Puzzle, the goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. \\\\
+In this report we present three approaches in designing the game logic, the first is the original solution that we came up with, which is to generate the cost table and make the game decisions based on the costs. The second approach is one that Prof. Sim briefly mentioned, which decides based on the optimum level stored in a table. The third approach is one that we found online, the combinatorics approach. We will discuss the advantages and disadvantages of each of the three approaches, as well as different implementations of them. Lastly, we will also discuss some interesting extensions of the problem such as adding an extra cost for breaking an iPad, and a variant of it with unlimited number of iPads, etc. To sum up, we conclude that for the original game logic, the cost table approach is the better choice, whereas for some extensions, the decision tree approach can be better.
 
 \subsubsection*{Subject Descriptors:\\}
 \begin{description}[labelindent=1cm]
@@ -112,7 +112,7 @@ In this report we present three approaches in designing the game logic, the firs
 \thispagestyle{plain}
 \onehalfspacing
 \addcontentsline{toc}{chapter}{Acknowledgements}
-We could like to thank Prof. Sim Khe Chai for the patience and guidance along the semester. Without Prof. Sim, we would not have gone this far. We would also like to thank our fellow classmates for the interesting discussions we had in our tutorial regarding this project that made us think deeper about the problem.
+We would like to thank Prof. Sim Khe Chai for his patience and guidance along the semester. Without Prof. Sim, we would not have gone this far. We would also like to thank our fellow classmates for the interesting discussions we had in our tutorials regarding this project that helped us in thinking deeper about the problem.
 \end{abstract}
 %===============================================================================
 % End of Acknowledgements
@@ -129,7 +129,7 @@ We could like to thank Prof. Sim Khe Chai for the patience and guidance along th
 %===============================================================================
 \chapter{Introduction}
 \setcounter{page}{1}
-The egg dropping puzzle is a well known one and an example most often used to illustrate dynamic programming as a concept in computer science. As an adaptation to the egg dropping puzzle, we were tasked to design the game logic for ``iPad Crusher'', an iOS game that our Prof. is developing. The problem involves $N$ number of iPads available and $L$ strength levels the player can use to crush the iPads. The goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. In the process leading up to the actual formulation of the game logic, we were guided to first come up with a brute-force approach to finding the best strategy. Thereafter, since the egg dropping puzzle can be solved using dynamic programming, we have done the same for our problem. With the dynamic programming solution, we were then able to design the game logic, which determines whether the iPad should survive, given the strength level that the user specifies. The game logic is one where it always simulates the worst-case scenario. This means that when a player chooses a strength level he/she wishes to use, the game logic will decide whether to crush the iPad depending on the choice that will result in more tries needed using a best strategy. As a further extension, we explored the case where we have to factor in a fixed iPad cost for each crushing of an iPad, as well as when the iPad cost changes as different numbers of iPads get crushed.
+The egg dropping puzzle is a well known one and an example most often used to illustrate dynamic programming as a concept in computer science. As an adaptation to the egg dropping puzzle, we were tasked to design the game logic for ``iPad Crusher'', an iOS game that our Prof. is developing. The problem involves $N$ number of iPads available and $L$ strength levels the player can use to crush the iPads. The goal of the game is to find the best strategy so that it involves the fewest number of crushing in the worst-case scenario. In the process leading up to the actual formulation of the game logic, we were guided to first come up with a brute-force approach to finding the best strategy. Thereafter, since the egg dropping puzzle can be solved using dynamic programming, we have done the same for our problem. With the dynamic programming solution, we were then able to design the game logic, which determines whether the iPad should survive, given the strength level that the player specifies. The game logic is one where it always simulates the worst-case scenario. This means that when a player chooses a strength level he/she wishes to use, the game logic will decide whether to crush the iPad depending on the choice that will result in more tries needed using a best strategy. As further extensions of the problem, we explored the case where we have to factor in a fixed iPad cost for each crushing of an iPad, as well as when the iPad cost changes as different numbers of iPads get crushed.
 
 %===============================================================================
 % End of Chapter 1
@@ -153,11 +153,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 % Start of Chapter 3
 %===============================================================================
 \chapter{The cost table approach}
-The first approach that came into our mind was to pre-compute an $N \times L$ two dimensional table containing the number of crushing needed for $N$ number of iPads and $L$ strength levels in the worst-case scenario. When the user choose a certain strength level, we will look up the costs for the upper sub-problem and the lower sub-problem in the table, compare them to decide whether the iPad should break at that strength level or not.
+The first approach that came into our mind was to pre-compute an $N \times L$ two dimensional table containing the number of crushing needed for $N$ number of iPads and $L$ strength levels in the worst-case scenario. When the player choose a certain strength level, we will look up the costs for the upper sub-problem and the lower sub-problem in the table, compare them to decide whether the iPad should break at that strength level or not.
 
 \section{Detailed description}
 Let us define the cost of a game state $(N, L)$ to be the minimum number of crushing using $N$ number of iPads and for $L$ strength levels. \\\\
-In a game level with $N$ number of iPads and $L$ strength levels, the user chooses to crush at strength level $x$:
+In a game level with $N$ number of iPads and $L$ strength levels, the player chooses to crush at strength level $x$:
 \begin{itemize}
 \item if the iPad breaks, the game state becomes $N - 1$ number of iPads and $x - 1$ strength levels.
 \item if the iPad does not break, the game state becomes $N$ number of iPads and $L - x$ strength levels.
@@ -177,7 +177,7 @@ L & \text{if $N = 1$} \\
 1 + min_{x \in [1, L]}(max(C(N - 1, x - 1), C(N, L - x))) & \text{otherwise}
 \end{cases}
 \]
-So all we need is to compute a $N \times L$ two dimensional table for each possible combination of $N$ and $L$. For the game logic, if the user chooses to crush at strength level $x$, we will look up 
+So all we need is to compute a $N \times L$ two dimensional table for each possible combination of $N$ and $L$. For the game logic, if the player chooses to crush at strength level $x$, we will look up 
 \begin{itemize}
 \item $C(N - 1, x - 1)$ (cost of the remaining sub-problem if the iPad breaks)
 \item $C(N, L - x)$ (cost of the remaining sub-problem if the iPad does not break)
