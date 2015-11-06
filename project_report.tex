@@ -383,7 +383,7 @@ Using the table cost approach, we would calculate the cost of the whole cost tab
 
 In this extension, we consider two scenarios: The number of iPads is finite or infinite
 
-In the case that there is a finite number of iPads, the cost table will be a 2D array, where the number of rows represent the number of iPads, and the number of columns represents the number of levels
+In the case that there is a finite number of iPads, the cost table will be a 2D array, where the number of rows represent the number of remaining iPads, and the number of columns represents the number of remaining strength levels
 
 The pseudo code to calculate the cost table for finite number of iPads is as follows
 
@@ -414,7 +414,7 @@ The pseudo code to calculate the cost table for finite number of iPads is as fol
 
 We can see that the difference between this and the previous cost table approach without iPad cost is only that the iPad cost is also added to the original cost in each cell
 
-In the case that there is an infinite number of iPads, the cost table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the level. The number of cells in the cost table hence represents the number of levels
+In the case that there is an infinite number of iPads, the cost table only needs to be a 1D array. Since the number of iPads is infinite, we no longer need to worry that we might run out of iPads. As such, we only need to consider how the cost will vary by the number of remaining strength levels. The number of cells in the cost table hence represents the number of remaining strength levels
 
 The pseudo code to calculate the cost table for infinite number of iPads is as follows
 
@@ -444,7 +444,7 @@ Intuitively, we can see that this problem is very close to the fixed iPad cost p
 
 We again consider the two scenarios where there are finite and infinite number of iPads.
 
-It turns out we can adapt the algorithm used to calculate the cost table for fixed cost iPads to calculate the cost table for dynamic cost iPads. Recall that the value in a particular cell in the cost table table[i][j] represents the cost when there are i remaining iPads and j remaining levels. It can be observed then that if a particular game starts with N iPads, the number of iPads that have been crushed at a cell is N-i.
+It turns out we can adapt the algorithm used to calculate the cost table for fixed cost iPads to calculate the cost table for dynamic cost iPads. Recall that the value in a particular cell in the cost table table[i][j] represents the cost when there are i remaining iPads and j remaining strength levels. It can be observed then that if a particular game starts with N iPads, the number of iPads that have been crushed at a cell is N-i.
 
 Following that intuition, we can come up with the pseudo code to calculate the cost table for finite number of iPads as follows
 
