@@ -153,7 +153,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis lacus posuere
 % Start of Chapter 3
 %===============================================================================
 \chapter{The cost table approach}
-The first approach that came into our mind was to pre-compute an $N \times L$ two dimensional table containing the number of crushing needed for $N$ number of iPads and $L$ strength levels in the worst-case scenario. When the player choose a certain strength level, we will look up the costs for the upper sub-problem and the lower sub-problem in the table, compare them to decide whether the iPad should break at that strength level or not.
+The first approach that came into our mind was to pre-compute an $N \times L$ two dimensional table containing the number of crushing needed for $N$ number of iPads and $L$ strength levels in the worst-case scenario. When the player choose a certain strength level, we will look up the costs for the upper sub-problem and the lower sub-problem in the table, before comparing them to decide whether the iPad should break at that strength level or not.
 
 \section{Detailed description}
 Let us define the cost of a game state $(N, L)$ to be the minimum number of crushing using $N$ number of iPads and for $L$ strength levels. \\\\
@@ -162,7 +162,7 @@ In a game level with $N$ number of iPads and $L$ strength levels, the player cho
 \item if the iPad breaks, the game state becomes $N - 1$ number of iPads and $x - 1$ strength levels.
 \item if the iPad does not break, the game state becomes $N$ number of iPads and $L - x$ strength levels.
 \end{itemize}
-We can compute the cost of $(N, L)$ by recursively compute all possible sub-problems, the cost of $(N, L)$ would be $(1 + \text{cost of the minimum-cost sub-problem})$. Here are some base cases:
+We can compute the cost of $(N, L)$ by recursively computing all possible sub-problems. The final cost of $(N, L)$ would be $(1 + \text{cost of the minimum-cost sub-problem})$. Here are some base cases:
 \begin{itemize}
 \item if $N = 1$, the cost would be $L$ because the only way to find the correct strength is to try one by one from the lowest strength level to the highest strength level. In the worst-case, the iPad only breaks at the highest strength level, so it will need $L$ number of crushing.
 \item if $L = 1$, the cost will be 1 since there is only one strength level to be crushed at.
@@ -210,7 +210,7 @@ Clearly this algorithm runs in exponential time. In fact, computing the cost for
 \section{A dynamic programming algorithm}
 Based on the naive brute-force algorithm, we have derived a dynamic programming algorithm which avoids the unnecessary repeated computations and makes computing the cost for large problems more practical. \\\\
 As we mentioned in the last section, using the brute-force algorithm, the computation of a larger problem involves computing a number of smaller problems, therefore it exhibits the optimal substructure property. Moreover, different problems might need to compute the same sub-problems, therefore it exhibits the overlapping sub-problem property. Hence, we can speed up the computation of it by using dynamic programming. \\\\
-Instead of computing each cell individually and fill in the table, we initialize all the base cases and then fill in the table row by row and make use the already computed values to compute the new values. Here's the pseudo-code:
+Instead of computing each cell individually to fill the table, we initialize all the base cases first and then fill in the table row by row, making use of the already computed values to compute the new values. Here's the pseudo-code:
 \begin{algorithm}
 \caption{$makeTable(N, L)$}
 \begin{algorithmic}[1]
@@ -237,7 +237,7 @@ Instead of computing each cell individually and fill in the table, we initialize
 \end{algorithm}
 ~\\
 Using the dynamic programming algorithm, we can reduce the running time of the algorithm to $O(NL^2)$. This is because for each of the $N \times L$ entries, we only need at most $L$ comparisons to get the result. \\\\
-It is capable of computing the cost with hundreds of strength levels and tens of iPads, whereas the brute-force algorithm is only capable of computing problems with around 20 strength levels and several iPads.
+This allows us to compute the cost of up to hundreds of strength levels and tens of iPads, whereas the brute-force algorithm is only capable of computing problems up to around 20 strength levels and several iPads.
 \section{Pros and Cons}
 
 %===============================================================================
