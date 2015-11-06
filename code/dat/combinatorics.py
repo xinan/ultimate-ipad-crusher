@@ -10,6 +10,11 @@ def trials(L, N):
     if (total >= L+1):
       return H
     H += 1
+
+def testComb(N, L):
+  table = [[trials(l+1, n+1) for n in range(N)] for l in range(L)]
+  return table[L-1][N-1]
+
     
 def costlyiPad(L, N):
   H = int(log(L, 2))
